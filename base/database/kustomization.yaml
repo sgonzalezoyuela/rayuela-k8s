@@ -6,7 +6,5 @@ resources:
   - statefulset.yaml
   - service.yaml
 
-configMapGenerator:
-  - name: rayuela-db-init
-    files:
-      - init-databases.sh
+# Note: Database initialization is handled by the app's init container
+# See base/app/init-db.sh

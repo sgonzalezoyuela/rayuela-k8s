@@ -28,6 +28,42 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+      
+      # ─────────────────────────────────────────────────────────────────
+      # Init Container: Create databases and load seed data
+      # ─────────────────────────────────────────────────────────────────
+      initContainers:
+        - name: init-db
+          image: postgres:17-alpine
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "/scripts/init-db.sh"]
+          envFrom:
+            - configMapRef:
+                name: rayuela-config
+          env:
+            - name: CENTRAL_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rayuela-secrets
+                  key: db-password
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /scripts
+              readOnly: true
+            - name: sql-data
+              mountPath: /sql
+              readOnly: true
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      
+      # ─────────────────────────────────────────────────────────────────
+      # Main Application Container
+      # ─────────────────────────────────────────────────────────────────
       containers:
         - name: rayuela
           image: ghcr.io/sgonzalezoyuela/rayuela:latest
@@ -102,4 +138,15 @@ spec:
             capabilities:
               drop:
                 - ALL
+      
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: rayuela-init-db
+            defaultMode: 0755
+        - name: sql-data
+          configMap:
+            name: rayuela-sql-data
+            defaultMode: 0644
+      
       terminationGracePeriodSeconds: 30

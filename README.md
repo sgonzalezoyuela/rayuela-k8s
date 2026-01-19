@@ -215,11 +215,48 @@ kubectl rollout restart statefulset/rayuela-db -n rayuela
 
 PostgreSQL 17 runs as a StatefulSet with persistent storage.
 
-### Databases Created
+### Database Initialization
 
-- `grexc` - Central database (organizations, users)
-- `grext1` - Tenant 1 database
-- `grext2` - Tenant 2 database
+Databases are automatically created and seeded by an **init container** that runs before the Rayuela application starts. This init container:
+
+1. Waits for PostgreSQL to be ready (up to 30 retries)
+2. Creates the databases if they don't exist:
+   - `grexc` - Central database (organizations, users)
+   - `grext1` - Tenant 1 database
+   - `grext2` - Tenant 2 database
+3. Loads seed data from SQL files:
+   - `central-data.sql` → grexc (organizations, users, assignments)
+   - `cargos-data.sql` → grext1, grext2 (job titles)
+   - `conceptos-data.sql` → grext1, grext2 (payroll concepts)
+   - `tenant1-data.sql` → grext1 (business units for tenant 1)
+   - `tenant2-data.sql` → grext2 (business units for tenant 2)
+4. Uses idempotent SQL (ON CONFLICT clauses) - safe to run multiple times
+
+The init container uses PostgreSQL 17 Alpine image and runs `base/app/init-db.sh`.
+
+### SQL Seed Data
+
+Seed data files are located in `base/app/sql/`:
+
+| File | Database | Contents |
+|------|----------|----------|
+| `central-data.sql` | grexc | Organizations, users, user-org assignments |
+| `cargos-data.sql` | grext1, grext2 | Job titles (cargos) |
+| `conceptos-data.sql` | grext1, grext2 | Payroll concepts |
+| `tenant1-data.sql` | grext1 | Business units for Organization 1 |
+| `tenant2-data.sql` | grext2 | Business units for Organization 2 |
+
+To modify seed data, edit the SQL files and redeploy. The SQL uses `ON CONFLICT DO UPDATE` for idempotency.
+
+### Checking Init Container Logs
+
+```bash
+# View init container logs
+kubectl logs -n rayuela deployment/rayuela -c init-db
+
+# If pod is still initializing
+kubectl logs -n rayuela <pod-name> -c init-db
+```
 
 ### Connecting to Database
 

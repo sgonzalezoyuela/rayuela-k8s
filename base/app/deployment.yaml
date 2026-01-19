@@ -108,6 +108,11 @@ spec:
                 secretKeyRef:
                   name: rayuela-secrets
                   key: oidc-client-secret
+            - name: OIDC_ISSUER_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: rayuela-config
+                  key: OIDC_ISSUER_URI
           resources:
             requests:
               cpu: 250m
@@ -119,7 +124,7 @@ spec:
             httpGet:
               path: /actuator/health/liveness
               port: http
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3

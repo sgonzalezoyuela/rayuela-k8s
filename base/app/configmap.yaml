@@ -48,7 +48,7 @@ data:
   # ─────────────────────────────────────────────────────────────────
   # OIDC_CLIENT_ID: set via Secret
   # OIDC_CLIENT_SECRET: set via Secret
-  # OIDC_ISSUER_URI: set per environment
+  OIDC_ISSUER_URI: "https://example.auth0.com/"  # Override per environment
   
   # ─────────────────────────────────────────────────────────────────
   # Application Metadata

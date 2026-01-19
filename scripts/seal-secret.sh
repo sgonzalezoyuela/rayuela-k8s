@@ -38,10 +38,10 @@ usage() {
     echo "  dev  -> rayuela-dev"
     echo "  prod -> rayuela"
     echo ""
-    echo "The script will prompt for:"
-    echo "  - Database password (required)"
-    echo "  - OIDC client ID (optional)"
-    echo "  - OIDC client secret (optional)"
+echo "The script will prompt for:"
+echo "  - Database password (required)"
+echo "  - OIDC client ID (required)"
+echo "  - OIDC client secret (required)"
     echo ""
     echo "Examples:"
     echo "  $0 dev"
@@ -118,12 +118,24 @@ if [[ -z "$DB_PASSWORD" ]]; then
     exit 1
 fi
 
-# Prompt for OIDC credentials (optional)
+# Prompt for OIDC credentials (REQUIRED for authentication)
 echo ""
-echo -e "${YELLOW}OAuth2/OIDC credentials (press Enter to skip):${NC}"
+echo -e "${YELLOW}OAuth2/OIDC credentials (required for authentication):${NC}"
 read -p "  OIDC Client ID: " OIDC_CLIENT_ID
 read -s -p "  OIDC Client Secret: " OIDC_CLIENT_SECRET
 echo ""
+
+if [[ -z "$OIDC_CLIENT_ID" ]]; then
+    echo -e "${RED}Error: OIDC Client ID is required${NC}"
+    echo "Get credentials from your Auth0 application settings"
+    exit 1
+fi
+
+if [[ -z "$OIDC_CLIENT_SECRET" ]]; then
+    echo -e "${RED}Error: OIDC Client Secret is required${NC}"
+    echo "Get credentials from your Auth0 application settings"
+    exit 1
+fi
 
 # Output file path
 OUTPUT_FILE="${REPO_ROOT}/env/${ENV}/sealed-secrets/secrets.yaml"
@@ -135,20 +147,9 @@ echo -e "${YELLOW}Sealing secrets...${NC}"
 SECRET_ARGS=(
     "--namespace=${NAMESPACE}"
     "--from-literal=db-password=${DB_PASSWORD}"
+    "--from-literal=oidc-client-id=${OIDC_CLIENT_ID}"
+    "--from-literal=oidc-client-secret=${OIDC_CLIENT_SECRET}"
 )
-
-if [[ -n "$OIDC_CLIENT_ID" ]]; then
-    SECRET_ARGS+=("--from-literal=oidc-client-id=${OIDC_CLIENT_ID}")
-else
-    # Use placeholder for optional secrets
-    SECRET_ARGS+=("--from-literal=oidc-client-id=not-configured")
-fi
-
-if [[ -n "$OIDC_CLIENT_SECRET" ]]; then
-    SECRET_ARGS+=("--from-literal=oidc-client-secret=${OIDC_CLIENT_SECRET}")
-else
-    SECRET_ARGS+=("--from-literal=oidc-client-secret=not-configured")
-fi
 
 # Create the sealed secret
 kubectl create secret generic rayuela-secrets \
@@ -172,13 +173,8 @@ echo "Namespace: ${NAMESPACE}"
 echo ""
 echo "Secrets included:"
 echo "  - db-password: ********"
-if [[ -n "$OIDC_CLIENT_ID" ]]; then
-    echo "  - oidc-client-id: ${OIDC_CLIENT_ID:0:8}..."
-    echo "  - oidc-client-secret: ********"
-else
-    echo "  - oidc-client-id: (not configured)"
-    echo "  - oidc-client-secret: (not configured)"
-fi
+echo "  - oidc-client-id: ${OIDC_CLIENT_ID:0:8}..."
+echo "  - oidc-client-secret: ********"
 echo ""
 echo -e "${CYAN}Next steps:${NC}"
 echo "  1. Review the sealed secret: cat ${OUTPUT_FILE}"

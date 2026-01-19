@@ -10,9 +10,8 @@ data:
   # Application metadata
   RAYUELA_ENV: "Desarrollo"
 
-  # OAuth2/OIDC issuer (dev Auth0 tenant)
-  # Override with your actual dev OIDC provider
-  OIDC_ISSUER_URI: "https://rayuela-dev.us.auth0.com/"
+  # OAuth2/OIDC issuer (Auth0 tenant)
+  OIDC_ISSUER_URI: "https://rayuela.us.auth0.com/"
 
   # Logging - more verbose for dev
   LOGGING_LEVEL_ROOT: "INFO"

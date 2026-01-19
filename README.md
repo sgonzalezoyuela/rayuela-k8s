@@ -47,7 +47,7 @@ kubectl rollout status deployment/sealed-secrets-controller -n kube-system
 
 ### 2. Seal Your Secrets
 
-The script will prompt for database password and optional OIDC credentials:
+The script will prompt for database password and OIDC credentials (all required):
 
 ```bash
 # For dev environment
@@ -133,28 +133,42 @@ Secrets are stored encrypted in `env/*/sealed-secrets/secrets.yaml`:
 
 | Key | Description | Required |
 |-----|-------------|----------|
-| `db-password` | PostgreSQL password | Yes |
-| `oidc-client-id` | OAuth2/OIDC client ID | No |
-| `oidc-client-secret` | OAuth2/OIDC client secret | No |
+| `db-password` | PostgreSQL password | **Yes** |
+| `oidc-client-id` | OAuth2/OIDC client ID | **Yes** |
+| `oidc-client-secret` | OAuth2/OIDC client secret | **Yes** |
+
+**Important:** All secrets are required. The application will fail to start without valid OIDC credentials.
 
 ### OAuth2/OIDC Configuration
 
-To enable OAuth2/OIDC authentication:
+The application requires OIDC authentication. Configure before deployment:
 
-1. Update `env/<env>/patches/configmap.yaml` with your OIDC issuer:
+1. **Get Auth0 credentials:**
+   - Log in to Auth0 Dashboard
+   - Create or select your Application (Regular Web Application)
+   - Copy Client ID and Client Secret
+
+2. **Configure callback URLs in Auth0:**
+   | Environment | Callback URL | Logout URL |
+   |-------------|--------------|------------|
+   | Dev | `https://rayuela-dev.grex.com.ar/login/oauth2/code/oidc` | `https://rayuela-dev.grex.com.ar/` |
+   | Prod | `https://rayuela.grex.com.ar/login/oauth2/code/oidc` | `https://rayuela.grex.com.ar/` |
+
+3. **Update OIDC issuer URI** in `env/<env>/patches/configmap.yaml`:
    ```yaml
-   OIDC_ISSUER_URI: "https://your-provider.com/"
+   OIDC_ISSUER_URI: "https://rayuela.us.auth0.com/"
    ```
 
-2. Run the seal script and provide OIDC credentials:
+4. **Seal the secrets** with OIDC credentials:
    ```bash
    ./scripts/seal-secret.sh dev
-   # Enter OIDC Client ID and Secret when prompted
+   # Enter database password, OIDC Client ID, and OIDC Client Secret
    ```
 
-3. Configure your OIDC provider with callback URL:
-   - Dev: `https://rayuela-dev.grex.com.ar/login/oauth2/code/oidc`
-   - Prod: `https://rayuela.grex.com.ar/login/oauth2/code/oidc`
+5. **Deploy:**
+   ```bash
+   kubectl apply -k env/dev
+   ```
 
 ## Updating the Image
 

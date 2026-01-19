@@ -4,12 +4,9 @@ kind: Kustomization
 # Rayuela Production Environment
 # Deploy: kubectl apply -k env/prod
 
-namePrefix: ""
-nameSuffix: ""
-
 resources:
   - ../../base
-  - sealed-secrets/db-password.yaml
+  - sealed-secrets/secrets.yaml
 
 patches:
   # App image and pull policy for prod
@@ -30,14 +27,16 @@ patches:
       kind: StatefulSet
       name: rayuela-db
 
-  # Prod logging level
+  # Prod-specific configuration
   - path: patches/configmap.yaml
     target:
       kind: ConfigMap
       name: rayuela-config
 
-commonLabels:
-  environment: prod
+labels:
+  - pairs:
+      environment: prod
+    includeSelectors: false
 
 commonAnnotations:
   rayuela.grex.com.ar/environment: "production"

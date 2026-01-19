@@ -4,12 +4,9 @@ kind: Kustomization
 # Rayuela Development Environment
 # Deploy: kubectl apply -k env/dev
 
-namePrefix: ""
-nameSuffix: ""
-
 resources:
   - ../../base
-  - sealed-secrets/db-password.yaml
+  - sealed-secrets/secrets.yaml
 
 patches:
   # App image and pull policy for dev
@@ -30,8 +27,16 @@ patches:
       kind: StatefulSet
       name: rayuela-db
 
-commonLabels:
-  environment: dev
+  # Dev-specific configuration
+  - path: patches/configmap.yaml
+    target:
+      kind: ConfigMap
+      name: rayuela-config
+
+labels:
+  - pairs:
+      environment: dev
+    includeSelectors: false
 
 commonAnnotations:
   rayuela.grex.com.ar/environment: "development"

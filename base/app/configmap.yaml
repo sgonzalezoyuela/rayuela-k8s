@@ -7,33 +7,80 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/part-of: rayuela
 data:
-  # Database configuration
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://rayuela-db:5432/grexc"
-  SPRING_DATASOURCE_USERNAME: "grex"
-  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.postgresql.Driver"
+  # Spring profile (overridden per environment)
+  SPRING_PROFILES_ACTIVE: "dev"
   
-  # JPA/Hibernate configuration
-  SPRING_JPA_HIBERNATE_DDL_AUTO: "validate"
-  SPRING_JPA_SHOW_SQL: "false"
+  # ─────────────────────────────────────────────────────────────────
+  # Central Database Configuration
+  # ─────────────────────────────────────────────────────────────────
+  CENTRAL_DB_HOST: "rayuela-db"
+  CENTRAL_DB_PORT: "5432"
+  CENTRAL_DB_NAME: "grexc"
+  CENTRAL_DB_USERNAME: "grex"
+  # CENTRAL_DB_PASSWORD is set via Secret
+  CENTRAL_DB_USE_TLS: "false"
   
-  # Flyway configuration
-  SPRING_FLYWAY_ENABLED: "true"
-  SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+  # ─────────────────────────────────────────────────────────────────
+  # Tenant 1 Database Configuration
+  # ─────────────────────────────────────────────────────────────────
+  TENANT_T1_NAME: "Tenant T1"
+  TENANT_T1_DB_HOST: "rayuela-db"
+  TENANT_T1_DB_PORT: "5432"
+  # Database name is hardcoded in application.yml as grext1
+  TENANT_T1_DB_USERNAME: "grex"
+  # TENANT_T1_DB_PASSWORD is set via Secret
+  TENANT_T1_DB_USE_TLS: "false"
   
-  # Logging configuration (stdout for containers)
+  # ─────────────────────────────────────────────────────────────────
+  # Tenant 2 Database Configuration
+  # ─────────────────────────────────────────────────────────────────
+  TENANT_T2_NAME: "Tenant T2"
+  TENANT_T2_DB_HOST: "rayuela-db"
+  TENANT_T2_DB_PORT: "5432"
+  # Database name is hardcoded in application.yml as grext2
+  TENANT_T2_DB_USERNAME: "grex"
+  # TENANT_T2_DB_PASSWORD is set via Secret
+  TENANT_T2_DB_USE_TLS: "false"
+  
+  # ─────────────────────────────────────────────────────────────────
+  # OAuth2/OIDC Configuration (disabled by default in base)
+  # Override in env/dev or env/prod with actual provider settings
+  # ─────────────────────────────────────────────────────────────────
+  # OIDC_CLIENT_ID: set via Secret
+  # OIDC_CLIENT_SECRET: set via Secret
+  # OIDC_ISSUER_URI: set per environment
+  
+  # ─────────────────────────────────────────────────────────────────
+  # Application Metadata
+  # ─────────────────────────────────────────────────────────────────
+  RAYUELA_ENV: "Development"
+  RAYUELA_VERSION: "1.0.0"
+  
+  # ─────────────────────────────────────────────────────────────────
+  # Server Configuration
+  # ─────────────────────────────────────────────────────────────────
+  SERVER_PORT: "8080"
+  SPRING_OUTPUT_ANSI_ENABLED: "NEVER"
+  
+  # ─────────────────────────────────────────────────────────────────
+  # Logging Configuration (stdout for containers)
+  # ─────────────────────────────────────────────────────────────────
   LOGGING_PATTERN_CONSOLE: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   LOGGING_LEVEL_ROOT: "INFO"
   LOGGING_LEVEL_COM_RAYUELA: "INFO"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: "WARN"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: "INFO"
   
-  # Spring Boot configuration
-  SPRING_OUTPUT_ANSI_ENABLED: "NEVER"
-  SERVER_PORT: "8080"
-  
-  # Actuator configuration (for health probes)
+  # ─────────────────────────────────────────────────────────────────
+  # Actuator Configuration (for health probes)
+  # ─────────────────────────────────────────────────────────────────
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics"
   MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
   MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED: "true"
   MANAGEMENT_HEALTH_READINESSSTATE_ENABLED: "true"
+  MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "when-authorized"
   
+  # ─────────────────────────────────────────────────────────────────
   # Timezone
+  # ─────────────────────────────────────────────────────────────────
   TZ: "America/Argentina/Buenos_Aires"

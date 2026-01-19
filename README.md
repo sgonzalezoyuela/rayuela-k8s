@@ -44,14 +44,16 @@ Wait for the controller to be ready:
 kubectl rollout status deployment/sealed-secrets-controller -n kube-system
 ```
 
-### 2. Seal Your Database Password
+### 2. Seal Your Secrets
+
+The script will prompt for database password and optional OIDC credentials:
 
 ```bash
 # For dev environment
-./scripts/seal-secret.sh dev "your-dev-password"
+./scripts/seal-secret.sh dev
 
 # For prod environment  
-./scripts/seal-secret.sh prod "your-prod-password"
+./scripts/seal-secret.sh prod
 ```
 
 ### 3. Deploy
@@ -83,6 +85,72 @@ kubectl logs -n rayuela -l app.kubernetes.io/name=rayuela -f
 |-------------|--------|----------|-----|--------|------------|
 | dev | rayuela-dev.grex.com.ar | 1 | 250m-500m | 512Mi-1Gi | 5Gi |
 | prod | rayuela.grex.com.ar | 2 | 500m-1000m | 1Gi-2Gi | 20Gi |
+
+## Configuration
+
+### Environment Variables
+
+The application is configured via environment variables in ConfigMaps and Secrets.
+
+#### Base Configuration (`base/app/configmap.yaml`)
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `CENTRAL_DB_HOST` | Central database host | `rayuela-db` |
+| `CENTRAL_DB_PORT` | Central database port | `5432` |
+| `CENTRAL_DB_NAME` | Central database name | `grexc` |
+| `CENTRAL_DB_USERNAME` | Database username | `grex` |
+| `TENANT_T1_*` | Tenant 1 database config | Same host, `grext1` |
+| `TENANT_T2_*` | Tenant 2 database config | Same host, `grext2` |
+| `SERVER_PORT` | Application port | `8080` |
+| `TZ` | Timezone | `America/Argentina/Buenos_Aires` |
+
+#### Environment-Specific Overrides
+
+**Dev** (`env/dev/patches/configmap.yaml`):
+| Variable | Value |
+|----------|-------|
+| `SPRING_PROFILES_ACTIVE` | `dev` |
+| `RAYUELA_ENV` | `Desarrollo` |
+| `LOGGING_LEVEL_COM_RAYUELA` | `DEBUG` |
+| `OIDC_ISSUER_URI` | Dev Auth0 tenant |
+
+**Prod** (`env/prod/patches/configmap.yaml`):
+| Variable | Value |
+|----------|-------|
+| `SPRING_PROFILES_ACTIVE` | `prod` |
+| `RAYUELA_ENV` | `Produccion` |
+| `LOGGING_LEVEL_COM_RAYUELA` | `INFO` |
+| `OIDC_ISSUER_URI` | Production OIDC provider |
+
+### Secrets (Sealed)
+
+Secrets are stored encrypted in `env/*/sealed-secrets/secrets.yaml`:
+
+| Key | Description | Required |
+|-----|-------------|----------|
+| `db-password` | PostgreSQL password | Yes |
+| `oidc-client-id` | OAuth2/OIDC client ID | No |
+| `oidc-client-secret` | OAuth2/OIDC client secret | No |
+
+### OAuth2/OIDC Configuration
+
+To enable OAuth2/OIDC authentication:
+
+1. Update `env/<env>/patches/configmap.yaml` with your OIDC issuer:
+   ```yaml
+   OIDC_ISSUER_URI: "https://your-provider.com/"
+   ```
+
+2. Run the seal script and provide OIDC credentials:
+   ```bash
+   ./scripts/seal-secret.sh dev
+   # Enter OIDC Client ID and Secret when prompted
+   ```
+
+3. Configure your OIDC provider with callback URL:
+   - Dev: `https://rayuela-dev.grex.com.ar/login/oauth2/code/oidc`
+   - Prod: `https://rayuela.grex.com.ar/login/oauth2/code/oidc`
 
 ## Updating the Image
 
@@ -130,12 +198,12 @@ Secrets are encrypted using Bitnami Sealed Secrets. The encrypted secrets in `en
 ### Rotating Secrets
 
 ```bash
-# Generate new sealed secret
-./scripts/seal-secret.sh dev "new-password"
+# Generate new sealed secret (will prompt for all values)
+./scripts/seal-secret.sh dev
 
 # Commit and apply
-git add env/dev/sealed-secrets/db-password.yaml
-git commit -m "chore: rotate dev database password"
+git add env/dev/sealed-secrets/secrets.yaml
+git commit -m "chore: rotate dev secrets"
 kubectl apply -k env/dev
 
 # Restart pods to pick up new secret
@@ -205,6 +273,21 @@ If databases aren't created, check the init script:
 
 ```bash
 kubectl logs -n rayuela rayuela-db-0 -c postgres | head -50
+```
+
+### OIDC Issues
+
+Check security debug logs:
+
+```bash
+kubectl logs -n rayuela -l app.kubernetes.io/name=rayuela --tail=200 | grep -i security
+```
+
+Verify OIDC config:
+
+```bash
+kubectl get configmap rayuela-config -n rayuela -o yaml | grep OIDC
+kubectl get secret rayuela-secrets -n rayuela -o jsonpath='{.data.oidc-client-id}' | base64 -d
 ```
 
 ## Kustomize Build Preview

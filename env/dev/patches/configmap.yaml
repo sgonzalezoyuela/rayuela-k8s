@@ -1,0 +1,23 @@
+# Dev environment configuration overrides
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rayuela-config
+data:
+  # Spring profile for dev
+  SPRING_PROFILES_ACTIVE: "dev"
+
+  # Application metadata
+  RAYUELA_ENV: "Desarrollo"
+
+  # OAuth2/OIDC issuer (dev Auth0 tenant)
+  # Override with your actual dev OIDC provider
+  OIDC_ISSUER_URI: "https://rayuela-dev.us.auth0.com/"
+
+  # Logging - more verbose for dev
+  LOGGING_LEVEL_ROOT: "INFO"
+  LOGGING_LEVEL_COM_RAYUELA: "DEBUG"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: "DEBUG"
+
+  # Show SQL in dev for debugging
+  SPRING_JPA_SHOW_SQL: "false"

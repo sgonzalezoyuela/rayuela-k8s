@@ -1,12 +1,23 @@
-# Prod environment: production logging settings
+# Prod environment configuration overrides
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: rayuela-config
 data:
-  # Production: WARN level for less noise
+  # Spring profile for prod
+  SPRING_PROFILES_ACTIVE: "prod"
+  
+  # Application metadata
+  RAYUELA_ENV: "Produccion"
+  
+  # OAuth2/OIDC issuer (prod OIDC provider)
+  # Override with your actual prod OIDC provider
+  OIDC_ISSUER_URI: "https://your-prod-oidc-provider.com/"
+  
+  # Logging - less verbose for prod
   LOGGING_LEVEL_ROOT: "WARN"
   LOGGING_LEVEL_COM_RAYUELA: "INFO"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: "WARN"
   
   # Disable SQL logging in prod
   SPRING_JPA_SHOW_SQL: "false"

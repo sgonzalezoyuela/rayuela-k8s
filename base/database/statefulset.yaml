@@ -35,8 +35,8 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: rayuela-db
-                  key: password
+                  name: rayuela-secrets
+                  key: db-password
             - name: POSTGRES_DB
               value: grexc
             - name: PGDATA

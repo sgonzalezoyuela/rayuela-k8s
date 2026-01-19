@@ -40,11 +40,39 @@ spec:
             - configMapRef:
                 name: rayuela-config
           env:
-            - name: SPRING_DATASOURCE_PASSWORD
+            # ─────────────────────────────────────────────────────────
+            # Database Passwords (from secrets)
+            # ─────────────────────────────────────────────────────────
+            - name: CENTRAL_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: rayuela-db
-                  key: password
+                  name: rayuela-secrets
+                  key: db-password
+            - name: TENANT_T1_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rayuela-secrets
+                  key: db-password
+            - name: TENANT_T2_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rayuela-secrets
+                  key: db-password
+            # ─────────────────────────────────────────────────────────
+            # OAuth2/OIDC Credentials (from secrets, optional)
+            # ─────────────────────────────────────────────────────────
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: rayuela-secrets
+                  key: oidc-client-id
+                  optional: true
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: rayuela-secrets
+                  key: oidc-client-secret
+                  optional: true
           resources:
             requests:
               cpu: 250m

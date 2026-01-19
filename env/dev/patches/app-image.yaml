@@ -1,0 +1,12 @@
+# Dev environment: use dev tag with Always pull policy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rayuela
+spec:
+  template:
+    spec:
+      containers:
+        - name: rayuela
+          image: ghcr.io/sgonzalezoyuela/rayuela:dev
+          imagePullPolicy: Always

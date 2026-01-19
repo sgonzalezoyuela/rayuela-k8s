@@ -1,0 +1,12 @@
+# Prod environment: use specific version tag with IfNotPresent policy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rayuela
+spec:
+  template:
+    spec:
+      containers:
+        - name: rayuela
+          image: ghcr.io/sgonzalezoyuela/rayuela:latest
+          imagePullPolicy: IfNotPresent

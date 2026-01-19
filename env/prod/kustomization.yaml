@@ -1,0 +1,44 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Rayuela Production Environment
+# Deploy: kubectl apply -k env/prod
+
+namePrefix: ""
+nameSuffix: ""
+
+resources:
+  - ../../base
+  - sealed-secrets/db-password.yaml
+
+patches:
+  # App image and pull policy for prod
+  - path: patches/app-image.yaml
+    target:
+      kind: Deployment
+      name: rayuela
+  
+  # Prod resource limits (larger, more replicas)
+  - path: patches/resources.yaml
+    target:
+      kind: Deployment
+      name: rayuela
+
+  # Prod database storage (larger)
+  - path: patches/db-storage.yaml
+    target:
+      kind: StatefulSet
+      name: rayuela-db
+
+  # Prod logging level
+  - path: patches/configmap.yaml
+    target:
+      kind: ConfigMap
+      name: rayuela-config
+
+commonLabels:
+  environment: prod
+
+commonAnnotations:
+  rayuela.grex.com.ar/environment: "production"
+  rayuela.grex.com.ar/domain: "rayuela.grex.com.ar"

@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Rayuela Development Environment
+# Deploy: kubectl apply -k env/dev
+
+namePrefix: ""
+nameSuffix: ""
+
+resources:
+  - ../../base
+  - sealed-secrets/db-password.yaml
+
+patches:
+  # App image and pull policy for dev
+  - path: patches/app-image.yaml
+    target:
+      kind: Deployment
+      name: rayuela
+  
+  # Dev resource limits (smaller)
+  - path: patches/resources.yaml
+    target:
+      kind: Deployment
+      name: rayuela
+
+  # Dev database storage (smaller)
+  - path: patches/db-storage.yaml
+    target:
+      kind: StatefulSet
+      name: rayuela-db
+
+commonLabels:
+  environment: dev
+
+commonAnnotations:
+  rayuela.grex.com.ar/environment: "development"
+  rayuela.grex.com.ar/domain: "rayuela-dev.grex.com.ar"

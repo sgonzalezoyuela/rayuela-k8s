@@ -1,0 +1,18 @@
+# Prod environment: larger resources, multiple replicas
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rayuela
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: rayuela
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 1000m
+              memory: 2Gi

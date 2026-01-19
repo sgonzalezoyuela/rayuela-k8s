@@ -1,0 +1,12 @@
+# Prod environment: production logging settings
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rayuela-config
+data:
+  # Production: WARN level for less noise
+  LOGGING_LEVEL_ROOT: "WARN"
+  LOGGING_LEVEL_COM_RAYUELA: "INFO"
+  
+  # Disable SQL logging in prod
+  SPRING_JPA_SHOW_SQL: "false"

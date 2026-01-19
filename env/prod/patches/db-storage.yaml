@@ -1,0 +1,16 @@
+# Prod environment: larger database storage
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rayuela-db
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: rayuela-storage
+        resources:
+          requests:
+            storage: 20Gi

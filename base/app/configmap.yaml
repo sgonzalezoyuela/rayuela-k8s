@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rayuela-config
+  labels:
+    app.kubernetes.io/name: rayuela
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: rayuela
+data:
+  # Database configuration
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://rayuela-db:5432/grexc"
+  SPRING_DATASOURCE_USERNAME: "grex"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.postgresql.Driver"
+  
+  # JPA/Hibernate configuration
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "validate"
+  SPRING_JPA_SHOW_SQL: "false"
+  
+  # Flyway configuration
+  SPRING_FLYWAY_ENABLED: "true"
+  SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+  
+  # Logging configuration (stdout for containers)
+  LOGGING_PATTERN_CONSOLE: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  LOGGING_LEVEL_ROOT: "INFO"
+  LOGGING_LEVEL_COM_RAYUELA: "INFO"
+  
+  # Spring Boot configuration
+  SPRING_OUTPUT_ANSI_ENABLED: "NEVER"
+  SERVER_PORT: "8080"
+  
+  # Actuator configuration (for health probes)
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+  MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED: "true"
+  MANAGEMENT_HEALTH_READINESSSTATE_ENABLED: "true"
+  
+  # Timezone
+  TZ: "America/Argentina/Buenos_Aires"

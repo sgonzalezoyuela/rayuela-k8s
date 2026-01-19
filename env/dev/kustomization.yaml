@@ -3,8 +3,12 @@ kind: Kustomization
 
 # Rayuela Development Environment
 # Deploy: kubectl apply -k env/dev
+# Namespace: rayuela-dev
+
+namespace: rayuela-dev
 
 resources:
+  - namespace.yaml
   - ../../base
   - sealed-secrets/secrets.yaml
 

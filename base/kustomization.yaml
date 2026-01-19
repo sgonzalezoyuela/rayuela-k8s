@@ -4,13 +4,14 @@ kind: Kustomization
 # Rayuela Base Configuration
 # This is the shared base for all environments (dev, prod)
 # Do not apply directly - use env/dev or env/prod overlays
-
-namespace: rayuela
+#
+# Note: Namespace is set by each overlay (dev=rayuela-dev, prod=rayuela)
 
 resources:
-  - namespace.yaml
   - database
   - app
 
-commonLabels:
-  app.kubernetes.io/managed-by: kustomize
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: kustomize
+    includeSelectors: false

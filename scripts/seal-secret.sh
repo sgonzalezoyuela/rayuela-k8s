@@ -7,8 +7,8 @@
 # The script will prompt for the required values interactively.
 #
 # Examples:
-#   ./scripts/seal-secret.sh dev
-#   ./scripts/seal-secret.sh prod
+#   ./scripts/seal-secret.sh dev   # Creates secret in rayuela-dev namespace
+#   ./scripts/seal-secret.sh prod  # Creates secret in rayuela namespace
 #
 # Prerequisites:
 #   - kubeseal CLI installed
@@ -34,6 +34,10 @@ usage() {
     echo "Arguments:"
     echo "  environment   Environment to seal secrets for (dev or prod)"
     echo ""
+    echo "Namespaces:"
+    echo "  dev  -> rayuela-dev"
+    echo "  prod -> rayuela"
+    echo ""
     echo "The script will prompt for:"
     echo "  - Database password (required)"
     echo "  - OIDC client ID (optional)"
@@ -52,8 +56,12 @@ fi
 
 ENV="$1"
 
-# Validate environment
-if [[ "$ENV" != "dev" && "$ENV" != "prod" ]]; then
+# Validate environment and set namespace
+if [[ "$ENV" == "dev" ]]; then
+    NAMESPACE="rayuela-dev"
+elif [[ "$ENV" == "prod" ]]; then
+    NAMESPACE="rayuela"
+else
     echo -e "${RED}Error: Environment must be 'dev' or 'prod'${NC}"
     usage
 fi
@@ -96,6 +104,7 @@ fi
 echo ""
 echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
 echo -e "${CYAN}  Sealing secrets for: ${ENV}${NC}"
+echo -e "${CYAN}  Namespace: ${NAMESPACE}${NC}"
 echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
 echo ""
 
@@ -124,7 +133,7 @@ echo -e "${YELLOW}Sealing secrets...${NC}"
 
 # Build the secret creation command
 SECRET_ARGS=(
-    "--namespace=rayuela"
+    "--namespace=${NAMESPACE}"
     "--from-literal=db-password=${DB_PASSWORD}"
 )
 
@@ -158,6 +167,8 @@ echo -e "${GREEN}═════════════════════
 echo ""
 echo "The sealed secret has been written to:"
 echo "  ${OUTPUT_FILE}"
+echo ""
+echo "Namespace: ${NAMESPACE}"
 echo ""
 echo "Secrets included:"
 echo "  - db-password: ********"

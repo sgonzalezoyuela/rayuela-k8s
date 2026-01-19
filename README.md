@@ -9,14 +9,15 @@ rayuela-k8s/
 ├── infra/                    # Cluster infrastructure components
 │   └── sealed-secrets/       # Sealed Secrets controller (v0.34.0)
 ├── base/                     # Shared application base
-│   ├── namespace.yaml
 │   ├── database/             # PostgreSQL 17 StatefulSet
-│   └── app/                  # Rayuela application
+│   └── app/                  # Rayuela application + SQL seed data
 ├── env/
-│   ├── dev/                  # Development environment
+│   ├── dev/                  # Development environment (namespace: rayuela-dev)
+│   │   ├── namespace.yaml
 │   │   ├── sealed-secrets/   # Encrypted secrets for dev
 │   │   └── patches/          # Dev-specific overrides
-│   └── prod/                 # Production environment
+│   └── prod/                 # Production environment (namespace: rayuela)
+│       ├── namespace.yaml
 │       ├── sealed-secrets/   # Encrypted secrets for prod
 │       └── patches/          # Prod-specific overrides
 └── scripts/
@@ -69,22 +70,25 @@ kubectl apply -k env/prod
 ### 4. Verify Deployment
 
 ```bash
-# Check pods
-kubectl get pods -n rayuela
+# Check pods (use appropriate namespace)
+kubectl get pods -n rayuela-dev   # dev
+kubectl get pods -n rayuela       # prod
 
 # Check services
-kubectl get svc -n rayuela
+kubectl get svc -n rayuela-dev    # dev
+kubectl get svc -n rayuela        # prod
 
 # View logs
-kubectl logs -n rayuela -l app.kubernetes.io/name=rayuela -f
+kubectl logs -n rayuela-dev -l app.kubernetes.io/name=rayuela -f   # dev
+kubectl logs -n rayuela -l app.kubernetes.io/name=rayuela -f       # prod
 ```
 
 ## Environments
 
-| Environment | Domain | Replicas | CPU | Memory | DB Storage |
-|-------------|--------|----------|-----|--------|------------|
-| dev | rayuela-dev.grex.com.ar | 1 | 250m-500m | 512Mi-1Gi | 5Gi |
-| prod | rayuela.grex.com.ar | 2 | 500m-1000m | 1Gi-2Gi | 20Gi |
+| Environment | Namespace | Domain | Replicas | CPU | Memory | DB Storage |
+|-------------|-----------|--------|----------|-----|--------|------------|
+| dev | `rayuela-dev` | rayuela-dev.grex.com.ar | 1 | 250m-500m | 512Mi-1Gi | 5Gi |
+| prod | `rayuela` | rayuela.grex.com.ar | 2 | 500m-1000m | 1Gi-2Gi | 20Gi |
 
 ## Configuration
 

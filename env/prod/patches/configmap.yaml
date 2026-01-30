@@ -12,7 +12,7 @@ data:
   
   # OAuth2/OIDC issuer (prod OIDC provider)
   # Override with your actual prod OIDC provider
-  OIDC_ISSUER_URI: "https://your-prod-oidc-provider.com/"
+  OIDC_ISSUER_URI: "https://rayuela.us.auth0.com/"
   
   # Logging - less verbose for prod
   LOGGING_LEVEL_ROOT: "WARN"

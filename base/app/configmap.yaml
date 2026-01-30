@@ -50,6 +50,11 @@ data:
   # OIDC_CLIENT_SECRET: set via Secret
   OIDC_ISSUER_URI: "https://example.auth0.com/"  # Override per environment
   
+  # OAuth2 Token Request Settings
+  OAUTH2_TOKEN_TIMEOUT_MS: "15000"       # Connect/read timeout (ms)
+  OAUTH2_TOKEN_MAX_RETRIES: "2"          # Max retry attempts on timeout
+  OAUTH2_TOKEN_RETRY_DELAY_MS: "500"     # Delay between retries (ms)
+  
   # ─────────────────────────────────────────────────────────────────
   # Application Metadata
   # ─────────────────────────────────────────────────────────────────

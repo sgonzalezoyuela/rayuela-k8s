@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: rayuela
 spec:
-  replicas: 2
+  replicas: 1
   template:
     spec:
       containers:

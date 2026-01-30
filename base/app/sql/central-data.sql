@@ -1,13 +1,22 @@
--- Central Database Test Data for Rayuela
--- Inserts two organizations (tenants) for testing
+-- =============================================================================
+-- Production Database - Central (grexc)
+-- =============================================================================
+-- Organization: Obispado de Cruz del Eje
+-- Users: 3 admin users with full access
+--
+-- UUID Pattern: 10000000-0000-0000-TTTT-NNNNNNNNNNNN
+--   TTTT = Entity type (0000=orgs, 0001=users, 0005=user-org-assignments)
+--   NNNN... = Entity number (padded)
+-- =============================================================================
 
--- Insert Organization 1
--- CUIT: 30-12345678-1 (valid Argentine CUIT for legal entity)
+-- -----------------------------------------------------------------------------
+-- Organization: Obispado de Cruz del Eje
+-- -----------------------------------------------------------------------------
 INSERT INTO organizations (id, name, cuit, status, version)
 VALUES (
-    'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
+    '10000000-0000-0000-0000-000000000001',
     'Obispado de Cruz del Eje',
-    '30123456781',
+    '30593655586',
     'ACTIVE',
     0
 )
@@ -17,44 +26,72 @@ ON CONFLICT (id) DO UPDATE SET
     status = EXCLUDED.status,
     version = EXCLUDED.version;
 
--- Insert Organization 2
--- CUIT: 30-23456789-2 (valid Argentine CUIT for legal entity)
-INSERT INTO organizations (id, name, cuit, status, version)
-VALUES (
-    'df766dc2-6d4c-44d4-90ad-19d9ab69fa9d',
-    'Organization 2',
-    '30234567892',
-    'ACTIVE',
-    0
-)
-ON CONFLICT (id) DO UPDATE SET
-    name = EXCLUDED.name,
-    cuit = EXCLUDED.cuit,
-    status = EXCLUDED.status,
-    version = EXCLUDED.version;
+-- -----------------------------------------------------------------------------
+-- Users
+-- -----------------------------------------------------------------------------
 
--- Insert test user Cecilia Ghio
+-- User 1: Maria Cecilia Ghio
 INSERT INTO users (id, email, first_name, last_name, status, version)
 VALUES (
-    'cccccccc-cccc-4ccc-cccc-cccccccccccc',
+    '10000000-0000-0000-0001-000000000001',
     'ceciliaghio49@gmail.com',
-    'Cecilia',
+    'Maria Cecilia',
     'Ghio',
     'ENABLED',
     0
 )
-ON CONFLICT (email) DO UPDATE SET
+ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
     first_name = EXCLUDED.first_name,
     last_name = EXCLUDED.last_name,
     status = EXCLUDED.status,
     version = EXCLUDED.version;
 
--- Assign Cecilia Ghio to Obispado de Cruz del Eje (no role column in new schema)
+-- User 2: Sebastian Gonzalez Oyuela
+INSERT INTO users (id, email, first_name, last_name, status, version)
+VALUES (
+    '10000000-0000-0000-0001-000000000002',
+    'sgonzalezoyuela@gmail.com',
+    'Sebastian',
+    'Gonzalez Oyuela',
+    'ENABLED',
+    0
+)
+ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    first_name = EXCLUDED.first_name,
+    last_name = EXCLUDED.last_name,
+    status = EXCLUDED.status,
+    version = EXCLUDED.version;
+
+-- User 3: Fernanda Ochoa
+INSERT INTO users (id, email, first_name, last_name, status, version)
+VALUES (
+    '10000000-0000-0000-0001-000000000003',
+    'cra.ochoafernanda84@gmail.com',
+    'Fernanda',
+    'Ochoa',
+    'ENABLED',
+    0
+)
+ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    first_name = EXCLUDED.first_name,
+    last_name = EXCLUDED.last_name,
+    status = EXCLUDED.status,
+    version = EXCLUDED.version;
+
+-- -----------------------------------------------------------------------------
+-- User-Organization Assignments
+-- All users assigned to Obispado de Cruz del Eje
+-- -----------------------------------------------------------------------------
+
+-- Assignment 1: Maria Cecilia Ghio -> Obispado de Cruz del Eje
 INSERT INTO user_org_assignments (id, user_id, organization_id, period_start, period_end, version)
 VALUES (
-    'dddddddd-dddd-4ddd-dddd-dddddddddddd',
-    'cccccccc-cccc-4ccc-cccc-cccccccccccc',
-    'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
+    '10000000-0000-0000-0005-000000000001',
+    '10000000-0000-0000-0001-000000000001',
+    '10000000-0000-0000-0000-000000000001',
     CURRENT_DATE,
     NULL,
     0
@@ -64,12 +101,27 @@ ON CONFLICT (user_id, organization_id) DO UPDATE SET
     period_end = EXCLUDED.period_end,
     version = EXCLUDED.version;
 
--- Assign Cecilia Ghio to Organization 2 (no role column in new schema)
+-- Assignment 2: Sebastian Gonzalez Oyuela -> Obispado de Cruz del Eje
 INSERT INTO user_org_assignments (id, user_id, organization_id, period_start, period_end, version)
 VALUES (
-    'eeeeeeee-eeee-4eee-eeee-eeeeeeeeeeee',
-    'cccccccc-cccc-4ccc-cccc-cccccccccccc',
-    'df766dc2-6d4c-44d4-90ad-19d9ab69fa9d',
+    '10000000-0000-0000-0005-000000000002',
+    '10000000-0000-0000-0001-000000000002',
+    '10000000-0000-0000-0000-000000000001',
+    CURRENT_DATE,
+    NULL,
+    0
+)
+ON CONFLICT (user_id, organization_id) DO UPDATE SET
+    period_start = EXCLUDED.period_start,
+    period_end = EXCLUDED.period_end,
+    version = EXCLUDED.version;
+
+-- Assignment 3: Fernanda Ochoa -> Obispado de Cruz del Eje
+INSERT INTO user_org_assignments (id, user_id, organization_id, period_start, period_end, version)
+VALUES (
+    '10000000-0000-0000-0005-000000000003',
+    '10000000-0000-0000-0001-000000000003',
+    '10000000-0000-0000-0000-000000000001',
     CURRENT_DATE,
     NULL,
     0

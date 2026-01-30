@@ -48,6 +48,9 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
+            - name: sql-data
+              mountPath: /sql
+              readOnly: true
           resources:
             requests:
               cpu: 100m
@@ -79,6 +82,11 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+      volumes:
+        - name: sql-data
+          configMap:
+            name: rayuela-sql-data
+            defaultMode: 0644
       terminationGracePeriodSeconds: 30
   volumeClaimTemplates:
     - metadata:

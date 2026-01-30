@@ -4,17 +4,18 @@
 -- Organization: Obispado de Cruz del Eje
 -- Users: 3 admin users with full access
 --
--- UUID Pattern: 10000000-0000-0000-TTTT-NNNNNNNNNNNN
---   TTTT = Entity type (0000=orgs, 0001=users, 0005=user-org-assignments)
---   NNNN... = Entity number (padded)
+-- IMPORTANT: Organization IDs must match tenant IDs in application.yml:
+--   f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6 -> grext1
+--   df766dc2-6d4c-44d4-90ad-19d9ab69fa9d -> grext2
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
 -- Organization: Obispado de Cruz del Eje
+-- ID must match the tenant ID in application.yml that maps to grext1
 -- -----------------------------------------------------------------------------
 INSERT INTO organizations (id, name, cuit, status, version)
 VALUES (
-    '10000000-0000-0000-0000-000000000001',
+    'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
     'Obispado de Cruz del Eje',
     '30593655586',
     'ACTIVE',
@@ -91,7 +92,7 @@ INSERT INTO user_org_assignments (id, user_id, organization_id, period_start, pe
 VALUES (
     '10000000-0000-0000-0005-000000000001',
     '10000000-0000-0000-0001-000000000001',
-    '10000000-0000-0000-0000-000000000001',
+    'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
     CURRENT_DATE,
     NULL,
     0
@@ -106,7 +107,7 @@ INSERT INTO user_org_assignments (id, user_id, organization_id, period_start, pe
 VALUES (
     '10000000-0000-0000-0005-000000000002',
     '10000000-0000-0000-0001-000000000002',
-    '10000000-0000-0000-0000-000000000001',
+    'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
     CURRENT_DATE,
     NULL,
     0
@@ -121,7 +122,7 @@ INSERT INTO user_org_assignments (id, user_id, organization_id, period_start, pe
 VALUES (
     '10000000-0000-0000-0005-000000000003',
     '10000000-0000-0000-0001-000000000003',
-    '10000000-0000-0000-0000-000000000001',
+    'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
     CURRENT_DATE,
     NULL,
     0

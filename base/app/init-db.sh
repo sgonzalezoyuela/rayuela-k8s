@@ -1,9 +1,11 @@
 #!/bin/sh
-# init-db.sh - Initialize Rayuela databases and load seed data
+# init-db.sh - Initialize Rayuela databases
 #
 # This script runs as an init container before the app starts.
-# It creates the central and tenant databases if they don't exist,
-# then loads seed data from SQL files.
+# It ONLY creates the databases - Flyway handles schema migrations.
+#
+# Seed data must be loaded MANUALLY after deployment since tables
+# don't exist until Flyway runs. See /sql directory for seed files.
 #
 # Required environment variables:
 #   CENTRAL_DB_HOST     - PostgreSQL host
@@ -15,17 +17,8 @@
 #   - grexc  : Central database (organizations, users)
 #   - grext1 : Tenant 1 database
 #   - grext2 : Tenant 2 database
-#
-# SQL files loaded (from /sql directory):
-#   - central-data.sql   -> grexc
-#   - cargos-data.sql    -> grext1, grext2
-#   - conceptos-data.sql -> grext1, grext2
-#   - tenant1-data.sql   -> grext1
-#   - tenant2-data.sql   -> grext2
 
 set -e
-
-SQL_DIR="/sql"
 
 echo "=========================================="
 echo "Rayuela Database Initialization"
@@ -62,7 +55,6 @@ create_db_if_not_exists() {
     
     if [ "$EXISTS" = "1" ]; then
         echo "  Database ${DB_NAME} already exists"
-        return 1  # Return 1 to indicate DB already existed
     else
         echo "  Creating database ${DB_NAME}..."
         PGPASSWORD="${CENTRAL_DB_PASSWORD}" psql -h "${CENTRAL_DB_HOST}" -p "${CENTRAL_DB_PORT}" -U "${CENTRAL_DB_USERNAME}" -d postgres <<-EOSQL
@@ -74,81 +66,19 @@ create_db_if_not_exists() {
                 CONNECTION LIMIT = -1;
 EOSQL
         echo "  Database ${DB_NAME} created successfully"
-        return 0  # Return 0 to indicate DB was created
     fi
 }
 
-# Function to run SQL file against a database
-run_sql_file() {
-    DB_NAME=$1
-    SQL_FILE=$2
-    
-    if [ -f "${SQL_DIR}/${SQL_FILE}" ]; then
-        echo "  Loading ${SQL_FILE} into ${DB_NAME}..."
-        PGPASSWORD="${CENTRAL_DB_PASSWORD}" psql -h "${CENTRAL_DB_HOST}" -p "${CENTRAL_DB_PORT}" -U "${CENTRAL_DB_USERNAME}" -d "${DB_NAME}" -f "${SQL_DIR}/${SQL_FILE}" > /dev/null 2>&1
-        echo "    Done"
-    else
-        echo "  Skipping ${SQL_FILE} (file not found)"
-    fi
-}
-
-# Function to check if a table has data
-table_has_data() {
-    DB_NAME=$1
-    TABLE_NAME=$2
-    
-    COUNT=$(PGPASSWORD="${CENTRAL_DB_PASSWORD}" psql -h "${CENTRAL_DB_HOST}" -p "${CENTRAL_DB_PORT}" -U "${CENTRAL_DB_USERNAME}" -d "${DB_NAME}" -tAc "SELECT COUNT(*) FROM ${TABLE_NAME}" 2>/dev/null || echo "0")
-    [ "$COUNT" != "0" ] && [ "$COUNT" != "" ]
-}
-
 echo "=========================================="
-echo "Phase 1: Creating databases"
+echo "Creating databases"
 echo "=========================================="
 echo ""
 
-# Create databases and track if they're new
-GREXC_NEW=false
-GREXT1_NEW=false
-GREXT2_NEW=false
-
-create_db_if_not_exists "grexc" && GREXC_NEW=true || true
-create_db_if_not_exists "grext1" && GREXT1_NEW=true || true
-create_db_if_not_exists "grext2" && GREXT2_NEW=true || true
+create_db_if_not_exists "grexc"
+create_db_if_not_exists "grext1"
+create_db_if_not_exists "grext2"
 
 echo ""
-echo "=========================================="
-echo "Phase 2: Loading seed data"
-echo "=========================================="
-echo ""
-
-# Check if SQL directory exists
-if [ ! -d "${SQL_DIR}" ]; then
-    echo "No SQL directory found at ${SQL_DIR}, skipping seed data"
-else
-    echo "SQL files found in ${SQL_DIR}:"
-    ls -la "${SQL_DIR}"/*.sql 2>/dev/null || echo "  (no .sql files)"
-    echo ""
-    
-    # Load central data (always idempotent with ON CONFLICT)
-    echo "Loading central database data..."
-    run_sql_file "grexc" "central-data.sql"
-    echo ""
-    
-    # Load tenant 1 data
-    echo "Loading tenant 1 database data..."
-    run_sql_file "grext1" "cargos-data.sql"
-    run_sql_file "grext1" "conceptos-data.sql"
-    run_sql_file "grext1" "tenant1-data.sql"
-    echo ""
-    
-    # Load tenant 2 data
-    echo "Loading tenant 2 database data..."
-    run_sql_file "grext2" "cargos-data.sql"
-    run_sql_file "grext2" "conceptos-data.sql"
-    run_sql_file "grext2" "tenant2-data.sql"
-    echo ""
-fi
-
 echo "=========================================="
 echo "Database Initialization Complete!"
 echo "=========================================="
@@ -158,5 +88,10 @@ echo "  - grexc  (Central database)"
 echo "  - grext1 (Tenant 1 database)"
 echo "  - grext2 (Tenant 2 database)"
 echo ""
-echo "Flyway will handle schema migrations when the app starts."
+echo "Next steps:"
+echo "  1. Flyway will create tables when the app starts"
+echo "  2. Seed data manually after app is running:"
+echo "     kubectl exec -it rayuela-db-0 -n rayuela -- psql -U grex -d grexc -f /path/to/central-data.sql"
+echo "     kubectl exec -it rayuela-db-0 -n rayuela -- psql -U grex -d grext1 -f /path/to/tenant1-data.sql"
+echo "     kubectl exec -it rayuela-db-0 -n rayuela -- psql -U grex -d grext2 -f /path/to/tenant2-data.sql"
 echo "=========================================="

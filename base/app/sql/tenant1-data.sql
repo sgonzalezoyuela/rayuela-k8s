@@ -4,9 +4,9 @@
 -- Business Unit: Inst. Alberdi - Secundaria
 -- Users: 3 admin users with ADMIN role
 --
--- UUID Pattern: 10000000-0000-0000-TTTT-NNNNNNNNNNNN
---   TTTT = Entity type (0001=users, 0002=BUs, 0003=roles, 0004=permissions)
---   NNNN... = Entity number (padded)
+-- IMPORTANT: organization_id must match the tenant ID in application.yml
+-- that maps to this database (grext1):
+--   f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
@@ -15,7 +15,7 @@
 INSERT INTO business_units (id, organization_id, name, code, version, cuit)
 VALUES (
     '10000000-0000-0000-0002-000000000001',
-    '10000000-0000-0000-0000-000000000001',
+    'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
     'Inst. Alberdi - Secundaria',
     'ALBE',
     0,

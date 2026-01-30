@@ -53,7 +53,7 @@ The script will prompt for database password and OIDC credentials (all required)
 # For dev environment
 ./scripts/seal-secret.sh dev
 
-# For prod environment  
+# For prod environment
 ./scripts/seal-secret.sh prod
 ```
 
@@ -177,7 +177,7 @@ The application requires OIDC authentication. Configure before deployment:
 Edit `env/dev/patches/app-image.yaml`:
 
 ```yaml
-image: ghcr.io/sgonzalezoyuela/rayuela:dev
+image: ghcr.io/sgonzalezoyuela/rayuela:latest
 imagePullPolicy: Always
 ```
 

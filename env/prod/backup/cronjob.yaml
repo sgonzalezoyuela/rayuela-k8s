@@ -1,0 +1,134 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rayuela-db-backup
+  labels:
+    app.kubernetes.io/name: rayuela-db-backup
+    app.kubernetes.io/component: backup
+    app.kubernetes.io/part-of: rayuela
+spec:
+  # Daily at 02:00 AM
+  schedule: "0 2 * * *"
+  
+  # Timezone (Argentina)
+  timeZone: "America/Argentina/Buenos_Aires"
+  
+  # Keep last 3 successful and 1 failed job for debugging
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  
+  # Don't run if previous job is still running
+  concurrencyPolicy: Forbid
+  
+  # Start job even if missed schedule (up to 100 seconds late)
+  startingDeadlineSeconds: 100
+  
+  jobTemplate:
+    spec:
+      # Auto-cleanup completed jobs after 1 hour
+      ttlSecondsAfterFinished: 3600
+      
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: rayuela-db-backup
+            app.kubernetes.io/component: backup
+        spec:
+          restartPolicy: OnFailure
+          
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+          
+          # Init container to provide restic binary
+          initContainers:
+            - name: copy-restic
+              image: restic/restic:0.17.3
+              command: ["/bin/sh", "-c"]
+              args:
+                - cp /usr/bin/restic /tools/restic && chmod +x /tools/restic
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+          
+          containers:
+            - name: backup
+              image: postgres:17-alpine
+              imagePullPolicy: IfNotPresent
+              
+              command: ["/bin/sh", "/scripts/backup.sh"]
+              
+              env:
+                # Restic configuration - via nginx reverse proxy
+                - name: RESTIC_REPOSITORY
+                  value: "rest:http://10.0.3.2:8000/rayuela"
+                - name: RESTIC_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: rayuela-backup-secrets
+                      key: restic-password
+                
+                # PostgreSQL configuration
+                - name: DB_HOST
+                  value: "rayuela-db"
+                - name: DB_USER
+                  value: "grex"
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: rayuela-secrets
+                      key: db-password
+                
+                # Pod metadata for backup metadata
+                - name: POD_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+                - name: POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+              
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+              
+              volumeMounts:
+                - name: backup-scripts
+                  mountPath: /scripts
+                  readOnly: true
+                - name: tmp-backup
+                  mountPath: /tmp/backup
+                - name: tools
+                  mountPath: /tools
+                  readOnly: true
+              
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: false
+                capabilities:
+                  drop:
+                    - ALL
+          
+          volumes:
+            - name: backup-scripts
+              configMap:
+                name: rayuela-backup-scripts
+                defaultMode: 0755
+            - name: tmp-backup
+              emptyDir:
+                sizeLimit: 1Gi
+            - name: tools
+              emptyDir:
+                sizeLimit: 50Mi

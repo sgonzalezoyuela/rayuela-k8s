@@ -11,6 +11,8 @@ resources:
   - namespace.yaml
   - ../../base
   - sealed-secrets/secrets.yaml
+  - sealed-secrets/backup-secrets.yaml
+  - backup
 
 patches:
   # App image and pull policy for prod

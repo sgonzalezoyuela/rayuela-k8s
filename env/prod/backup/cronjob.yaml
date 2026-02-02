@@ -69,6 +69,8 @@ spec:
                 # Restic configuration - via nginx reverse proxy
                 - name: RESTIC_REPOSITORY
                   value: "rest:http://10.0.3.2:8000/rayuela"
+                - name: RESTIC_CACHE_DIR
+                  value: "/tmp/restic-cache"
                 - name: RESTIC_PASSWORD
                   valueFrom:
                     secretKeyRef:

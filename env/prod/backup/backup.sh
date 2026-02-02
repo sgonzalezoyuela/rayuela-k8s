@@ -112,8 +112,8 @@ echo "Current snapshots"
 echo "=========================================="
 restic snapshots --tag rayuela
 
-# Cleanup
-rm -rf "$BACKUP_DIR"
+# Cleanup (remove contents, not the emptyDir mount itself)
+rm -rf "$BACKUP_DIR"/*
 
 echo ""
 echo "=========================================="

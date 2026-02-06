@@ -37,6 +37,16 @@ patches:
       kind: ConfigMap
       name: rayuela-config
 
+configMapGenerator:
+  # Development SQL seed data files
+  - name: rayuela-sql-data
+    files:
+      - sql/central-data.sql
+      - sql/cargos-data.sql
+      - sql/conceptos-data.sql
+      - sql/tenant1-data.sql
+      - sql/tenant2-data.sql
+
 labels:
   - pairs:
       environment: dev

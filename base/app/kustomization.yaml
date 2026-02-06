@@ -12,11 +12,6 @@ configMapGenerator:
     files:
       - init-db.sh
   
-  # SQL seed data files
-  - name: rayuela-sql-data
-    files:
-      - sql/central-data.sql
-      - sql/cargos-data.sql
-      - sql/conceptos-data.sql
-      - sql/tenant1-data.sql
-      - sql/tenant2-data.sql
+  # NOTE: rayuela-sql-data ConfigMap is generated per-environment
+  # in env/dev/kustomization.yaml and env/prod/kustomization.yaml
+  # since each environment needs different seed data.

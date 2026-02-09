@@ -8,5 +8,6 @@ spec:
     spec:
       containers:
         - name: rayuela
-          image: ghcr.io/sgonzalezoyuela/rayuela:latest
+          #image: ghcr.io/sgonzalezoyuela/rayuela:latest
+          image: cr.lab.atricore.io/sgonzalezoyuela/rayuela:latest
           imagePullPolicy: Always

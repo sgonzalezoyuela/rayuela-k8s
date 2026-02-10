@@ -8,5 +8,5 @@ spec:
     spec:
       containers:
         - name: rayuela
-          image: ghcr.io/sgonzalezoyuela/rayuela:0.3.0
+          image: ghcr.io/sgonzalezoyuela/rayuela:0.3.2
           imagePullPolicy: IfNotPresent

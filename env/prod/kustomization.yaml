@@ -48,6 +48,8 @@ configMapGenerator:
       - sql/conceptos-data.sql
       - sql/tenant1-data.sql
       - sql/tenant2-data.sql
+      # Migrations (applied to running databases)
+      - sql/migrations/001-add-stella-maris-bu.sql
 
 labels:
   - pairs:

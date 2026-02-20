@@ -1,7 +1,9 @@
 -- =============================================================================
 -- Production Database - Tenant 1 (grext1) - Obispado de Cruz del Eje
 -- =============================================================================
--- Business Unit: Inst. Alberdi - Secundaria
+-- Business Units:
+--   - Inst. Alberdi - Secundaria (ALBE)
+--   - Inst. Agrotécnico Stella Maris (SMAR)
 -- Users: 3 admin users with ADMIN role
 --
 -- IMPORTANT: organization_id must match the tenant ID in application.yml
@@ -20,6 +22,25 @@ VALUES (
     'ALBE',
     0,
     '33709409579'
+)
+ON CONFLICT (id) DO UPDATE SET
+    organization_id = EXCLUDED.organization_id,
+    name = EXCLUDED.name,
+    code = EXCLUDED.code,
+    version = EXCLUDED.version,
+    cuit = EXCLUDED.cuit;
+
+-- -----------------------------------------------------------------------------
+-- Business Unit: Inst. Agrotécnico Stella Maris
+-- -----------------------------------------------------------------------------
+INSERT INTO business_units (id, organization_id, name, code, version, cuit)
+VALUES (
+    '10000000-0000-0000-0002-000000000002',
+    'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
+    'Inst. Agrotécnico Stella Maris',
+    'SMAR',
+    0,
+    '30608940746'
 )
 ON CONFLICT (id) DO UPDATE SET
     organization_id = EXCLUDED.organization_id,
@@ -143,6 +164,35 @@ INSERT INTO tenant_user_business_units (tenant_user_id, business_unit_id)
 VALUES (
     '10000000-0000-0000-0001-000000000003',
     '10000000-0000-0000-0002-000000000001'
+)
+ON CONFLICT (tenant_user_id, business_unit_id) DO NOTHING;
+
+-- -----------------------------------------------------------------------------
+-- User-Business Unit Associations
+-- All users associated with Inst. Agrotécnico Stella Maris
+-- -----------------------------------------------------------------------------
+
+-- Maria Cecilia Ghio -> Inst. Agrotécnico Stella Maris
+INSERT INTO tenant_user_business_units (tenant_user_id, business_unit_id)
+VALUES (
+    '10000000-0000-0000-0001-000000000001',
+    '10000000-0000-0000-0002-000000000002'
+)
+ON CONFLICT (tenant_user_id, business_unit_id) DO NOTHING;
+
+-- Sebastian Gonzalez Oyuela -> Inst. Agrotécnico Stella Maris
+INSERT INTO tenant_user_business_units (tenant_user_id, business_unit_id)
+VALUES (
+    '10000000-0000-0000-0001-000000000002',
+    '10000000-0000-0000-0002-000000000002'
+)
+ON CONFLICT (tenant_user_id, business_unit_id) DO NOTHING;
+
+-- Fernanda Ochoa -> Inst. Agrotécnico Stella Maris
+INSERT INTO tenant_user_business_units (tenant_user_id, business_unit_id)
+VALUES (
+    '10000000-0000-0000-0001-000000000003',
+    '10000000-0000-0000-0002-000000000002'
 )
 ON CONFLICT (tenant_user_id, business_unit_id) DO NOTHING;
 

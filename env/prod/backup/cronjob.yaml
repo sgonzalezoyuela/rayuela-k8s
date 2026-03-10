@@ -20,13 +20,13 @@ spec:
   # Don't run if previous job is still running
   concurrencyPolicy: Forbid
   
-  # Start job even if missed schedule (up to 100 seconds late)
-  startingDeadlineSeconds: 100
+  # Start job even if missed schedule (up to 10 minutes late)
+  startingDeadlineSeconds: 600
   
   jobTemplate:
     spec:
-      # Auto-cleanup completed jobs after 1 hour
-      ttlSecondsAfterFinished: 3600
+      # Auto-cleanup completed jobs after 24 hours
+      ttlSecondsAfterFinished: 86400
       
       template:
         metadata:

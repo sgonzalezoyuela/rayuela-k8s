@@ -112,6 +112,14 @@ echo "Current snapshots"
 echo "=========================================="
 restic snapshots --tag rayuela
 
+# Verify repository integrity
+echo ""
+echo "=========================================="
+echo "Verifying repository integrity"
+echo "=========================================="
+restic check --verbose
+echo "Repository integrity verified."
+
 # Cleanup (remove contents, not the emptyDir mount itself)
 rm -rf "$BACKUP_DIR"/*
 

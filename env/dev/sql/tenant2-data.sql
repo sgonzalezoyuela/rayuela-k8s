@@ -80,6 +80,40 @@ ON CONFLICT (id) DO UPDATE SET
     status = EXCLUDED.status,
     version = EXCLUDED.version;
 
+-- Tenant User: Maria Cecilia Ghio
+INSERT INTO tenant_users (id, email, first_name, last_name, status, version)
+VALUES (
+    '10000000-0000-0000-0001-000000000001',
+    'ceciliaghio49@gmail.com',
+    'Maria Cecilia',
+    'Ghio',
+    'ENABLED',
+    0
+)
+ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    first_name = EXCLUDED.first_name,
+    last_name = EXCLUDED.last_name,
+    status = EXCLUDED.status,
+    version = EXCLUDED.version;
+
+-- Tenant User: Fernanda Ochoa
+INSERT INTO tenant_users (id, email, first_name, last_name, status, version)
+VALUES (
+    '10000000-0000-0000-0001-000000000003',
+    'cra.ochoafernanda84@gmail.com',
+    'Fernanda',
+    'Ochoa',
+    'ENABLED',
+    0
+)
+ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    first_name = EXCLUDED.first_name,
+    last_name = EXCLUDED.last_name,
+    status = EXCLUDED.status,
+    version = EXCLUDED.version;
+
 -- -----------------------------------------------------------------------------
 -- User-Business Unit Associations
 -- -----------------------------------------------------------------------------
@@ -92,6 +126,22 @@ VALUES (
 )
 ON CONFLICT (tenant_user_id, business_unit_id) DO NOTHING;
 
+-- Maria Cecilia Ghio -> Dev Business Unit 2
+INSERT INTO tenant_user_business_units (tenant_user_id, business_unit_id)
+VALUES (
+    '10000000-0000-0000-0001-000000000001',
+    '20000000-0000-0000-0002-000000000002'
+)
+ON CONFLICT (tenant_user_id, business_unit_id) DO NOTHING;
+
+-- Fernanda Ochoa -> Dev Business Unit 2
+INSERT INTO tenant_user_business_units (tenant_user_id, business_unit_id)
+VALUES (
+    '10000000-0000-0000-0001-000000000003',
+    '20000000-0000-0000-0002-000000000002'
+)
+ON CONFLICT (tenant_user_id, business_unit_id) DO NOTHING;
+
 -- -----------------------------------------------------------------------------
 -- User-Role Assignments
 -- -----------------------------------------------------------------------------
@@ -100,6 +150,22 @@ ON CONFLICT (tenant_user_id, business_unit_id) DO NOTHING;
 INSERT INTO tenant_user_roles (tenant_user_id, role_id)
 VALUES (
     '10000000-0000-0000-0001-000000000002',
+    '20000000-0000-0000-0003-000000000002'
+)
+ON CONFLICT (tenant_user_id, role_id) DO NOTHING;
+
+-- Maria Cecilia Ghio -> ADMIN
+INSERT INTO tenant_user_roles (tenant_user_id, role_id)
+VALUES (
+    '10000000-0000-0000-0001-000000000001',
+    '20000000-0000-0000-0003-000000000002'
+)
+ON CONFLICT (tenant_user_id, role_id) DO NOTHING;
+
+-- Fernanda Ochoa -> ADMIN
+INSERT INTO tenant_user_roles (tenant_user_id, role_id)
+VALUES (
+    '10000000-0000-0000-0001-000000000003',
     '20000000-0000-0000-0003-000000000002'
 )
 ON CONFLICT (tenant_user_id, role_id) DO NOTHING;

@@ -42,8 +42,10 @@ configMapGenerator:
   - name: rayuela-sql-data
     files:
       - sql/central-data.sql
+      - sql/convenios-data.sql
       - sql/cargos-data.sql
       - sql/conceptos-data.sql
+      - sql/concepto-versiones-data.sql
       - sql/tenant1-data.sql
       - sql/tenant2-data.sql
 

@@ -3,9 +3,9 @@ kind: Kustomization
 
 # Rayuela Production Environment
 # Deploy: kubectl apply -k env/prod
-# Namespace: rayuela
+# Namespace: rayuela-prod
 
-namespace: rayuela
+namespace: rayuela-prod
 
 resources:
   - namespace.yaml
@@ -44,12 +44,15 @@ configMapGenerator:
   - name: rayuela-sql-data
     files:
       - sql/central-data.sql
+      - sql/convenios-data.sql
       - sql/cargos-data.sql
       - sql/conceptos-data.sql
+      - sql/concepto-versiones-data.sql
       - sql/tenant1-data.sql
       - sql/tenant2-data.sql
       # Migrations (applied to running databases)
       - sql/migrations/001-add-stella-maris-bu.sql
+      - sql/migrations/002-add-convenio-escala-salarial.sql
 
 labels:
   - pairs:

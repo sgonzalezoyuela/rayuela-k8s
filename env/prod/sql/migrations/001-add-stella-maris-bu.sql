@@ -5,7 +5,7 @@
 -- Organization: Obispado de Cruz del Eje (f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6)
 --
 -- Apply to running prod:
---   kubectl exec -it rayuela-db-0 -n rayuela -- \
+--   kubectl exec -it rayuela-db-0 -n rayuela-prod -- \
 --     psql -U grex -d grext1 -f /sql/001-add-stella-maris-bu.sql
 --
 -- Safe to re-run (all statements use ON CONFLICT).

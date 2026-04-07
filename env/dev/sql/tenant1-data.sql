@@ -204,3 +204,16 @@ VALUES (
     '20000000-0000-0000-0003-000000000001'
 )
 ON CONFLICT (tenant_user_id, role_id) DO NOTHING;
+
+-- -----------------------------------------------------------------------------
+-- Business Unit-Convenio Associations
+-- Links business units with their applicable salary agreements.
+-- -----------------------------------------------------------------------------
+
+-- Inst. Alberdi - Secundaria -> Escala Salarial Docente - CBA
+INSERT INTO empresas_convenios (empresa_id, convenio_id)
+VALUES (
+    '20000000-0000-0000-0002-000000000001',
+    '00000000-0000-4000-8000-000000000001'
+)
+ON CONFLICT (empresa_id, convenio_id) DO NOTHING;

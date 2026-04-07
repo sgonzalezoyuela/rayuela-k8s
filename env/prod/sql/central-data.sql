@@ -88,46 +88,34 @@ ON CONFLICT (id) DO UPDATE SET
 -- -----------------------------------------------------------------------------
 
 -- Assignment 1: Maria Cecilia Ghio -> Obispado de Cruz del Eje
-INSERT INTO user_org_assignments (id, user_id, organization_id, period_start, period_end, version)
+INSERT INTO user_org_assignments (id, user_id, organization_id, version)
 VALUES (
     '10000000-0000-0000-0005-000000000001',
     '10000000-0000-0000-0001-000000000001',
     'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
-    CURRENT_DATE,
-    NULL,
     0
 )
 ON CONFLICT (user_id, organization_id) DO UPDATE SET
-    period_start = EXCLUDED.period_start,
-    period_end = EXCLUDED.period_end,
     version = EXCLUDED.version;
 
 -- Assignment 2: Sebastian Gonzalez Oyuela -> Obispado de Cruz del Eje
-INSERT INTO user_org_assignments (id, user_id, organization_id, period_start, period_end, version)
+INSERT INTO user_org_assignments (id, user_id, organization_id, version)
 VALUES (
     '10000000-0000-0000-0005-000000000002',
     '10000000-0000-0000-0001-000000000002',
     'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
-    CURRENT_DATE,
-    NULL,
     0
 )
 ON CONFLICT (user_id, organization_id) DO UPDATE SET
-    period_start = EXCLUDED.period_start,
-    period_end = EXCLUDED.period_end,
     version = EXCLUDED.version;
 
 -- Assignment 3: Fernanda Ochoa -> Obispado de Cruz del Eje
-INSERT INTO user_org_assignments (id, user_id, organization_id, period_start, period_end, version)
+INSERT INTO user_org_assignments (id, user_id, organization_id, version)
 VALUES (
     '10000000-0000-0000-0005-000000000003',
     '10000000-0000-0000-0001-000000000003',
     'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
-    CURRENT_DATE,
-    NULL,
     0
 )
 ON CONFLICT (user_id, organization_id) DO UPDATE SET
-    period_start = EXCLUDED.period_start,
-    period_end = EXCLUDED.period_end,
     version = EXCLUDED.version;

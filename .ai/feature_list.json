@@ -3,8 +3,8 @@
     "projectName": "rayuela-k8s",
     "goal": "Migrate K8s deployment from database-per-tenant (3 DBs: grexc, grext1, grext2) to schema-per-tenant (1 DB: rayuela, with public + tenant_{uuid} schemas) to match the current application architecture.",
     "createdAt": "2026-04-08T02:13:00.551Z",
-    "updatedAt": "2026-04-08T02:29:17.312Z",
-    "version": 4,
+    "updatedAt": "2026-04-08T02:29:17.738Z",
+    "version": 5,
     "tddMode": "disabled"
   },
   "features": [
@@ -62,7 +62,7 @@
       "description": "Adapt all SQL seed files for schema-per-tenant model: add SET search_path directives, fix column names (schema_name not nombre_esquema, status not estado), fix enum values (HABILITADO not ENABLED for tenant_users), add schema_name to organizations INSERT.",
       "module": "sql",
       "priority": 3,
-      "status": "failing",
+      "status": "passing",
       "acceptance": [
         "All public-schema SQL files (central-data, convenios-data, cargos-data, conceptos-data, concepto-versiones-data) start with SET search_path = 'public';",
         "Prod tenant1-data.sql starts with SET search_path = 'tenant_f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6';",
@@ -89,7 +89,8 @@
         "env/dev/sql/tenant1-data.sql",
         "env/dev/sql/tenant2-data.sql"
       ],
-      "version": 1
+      "version": 1,
+      "updatedAt": "2026-04-08T02:29:17.737Z"
     },
     {
       "id": "scripts.seed-update",

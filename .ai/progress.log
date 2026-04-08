@@ -1,3 +1,4 @@
 2026-04-08T02:13:00.552Z [INIT] Initialized rayuela-k8s with 1 features
 2026-04-08T02:29:13.358Z [DONE] <db.connection> Completed feature db.connection
 2026-04-08T02:29:17.312Z [DONE] <db.init-script> Completed feature db.init-script
+2026-04-08T02:29:17.738Z [DONE] <sql.seed-schema-migration> Completed feature sql.seed-schema-migration

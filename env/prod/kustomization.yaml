@@ -50,9 +50,6 @@ configMapGenerator:
       - sql/concepto-versiones-data.sql
       - sql/tenant1-data.sql
       - sql/tenant2-data.sql
-      # Migrations (applied to running databases)
-      - sql/migrations/001-add-stella-maris-bu.sql
-      - sql/migrations/002-add-convenio-escala-salarial.sql
 
 labels:
   - pairs:
@@ -61,4 +58,4 @@ labels:
 
 commonAnnotations:
   rayuela.grex.com.ar/environment: "production"
-  rayuela.grex.com.ar/domain: "rayuela.grex.com.ar"
+  rayuela.grex.com.ar/domain: "rayue.la"

@@ -1,30 +1,30 @@
 -- =============================================================================
--- Production Database - Central (grexc)
+-- Production Seed Data - Public Schema (rayuela database)
 -- =============================================================================
 -- Organization: Obispado de Cruz del Eje
 -- Users: 3 admin users with full access
---
--- IMPORTANT: Organization IDs must match tenant IDs in application.yml:
---   f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6 -> grext1
---   df766dc2-6d4c-44d4-90ad-19d9ab69fa9d -> grext2
 -- =============================================================================
+
+SET search_path = 'public';
 
 -- -----------------------------------------------------------------------------
 -- Organization: Obispado de Cruz del Eje
--- ID must match the tenant ID in application.yml that maps to grext1
+-- schema_name links to the tenant schema for this organization
 -- -----------------------------------------------------------------------------
-INSERT INTO organizations (id, name, cuit, status, version)
+INSERT INTO organizations (id, name, cuit, status, schema_name, version)
 VALUES (
     'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
     'Obispado de Cruz del Eje',
     '30593655586',
-    'ACTIVE',
+    'ACTIVA',
+    'tenant_f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
     cuit = EXCLUDED.cuit,
     status = EXCLUDED.status,
+    schema_name = EXCLUDED.schema_name,
     version = EXCLUDED.version;
 
 -- -----------------------------------------------------------------------------

@@ -21,3 +21,7 @@ data:
   
   # Disable SQL logging in prod
   SPRING_JPA_SHOW_SQL: "false"
+
+  # Tenant schemas to create during init (comma-separated UUIDs)
+  # Obispado de Cruz del Eje
+  TENANT_SCHEMAS: "f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6"

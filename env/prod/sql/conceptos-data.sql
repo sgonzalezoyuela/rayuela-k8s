@@ -1,7 +1,7 @@
 -- =============================================================================
 -- Conceptos (Pay Concepts) - Shared Catalog Data
 -- =============================================================================
--- Public schema seed data for the conceptos table.
+-- Public schema seed data for the conceptos table (rayuela database).
 -- All conceptos belong to a convenio. Currently all rows belong to the
 -- "Escala Salarial Docente - CBA" convenio (ESC-DOC-CBA).
 -- This data is identical for all environments (dev, prod).
@@ -12,6 +12,8 @@
 --
 -- UUIDs are deterministic based on concepto codigo for reproducibility.
 -- =============================================================================
+
+SET search_path = 'public';
 
 INSERT INTO conceptos (id, convenio_id, codigo, alias, descripcion, tipo, version) VALUES
     ('00000000-0000-4000-8000-000001000003', '00000000-0000-4000-8000-000000000001', '1000003', 'ASIGNACION_BASICA', 'Asignación Basica', 'H', 0),

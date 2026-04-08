@@ -1,15 +1,14 @@
 -- =============================================================================
--- Production Database - Tenant 1 (grext1) - Obispado de Cruz del Eje
+-- Production Seed Data - Tenant Schema (rayuela database)
+-- Tenant: Obispado de Cruz del Eje
 -- =============================================================================
 -- Business Units:
 --   - Inst. Alberdi - Secundaria (ALBE)
 --   - Inst. Agrotécnico Stella Maris (SMAR)
 -- Users: 3 admin users with ADMIN role
---
--- IMPORTANT: organization_id must match the tenant ID in application.yml
--- that maps to this database (grext1):
---   f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6
 -- =============================================================================
+
+SET search_path = 'tenant_f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6';
 
 -- -----------------------------------------------------------------------------
 -- Business Unit: Inst. Alberdi - Secundaria
@@ -94,7 +93,7 @@ VALUES (
     'ceciliaghio49@gmail.com',
     'Maria Cecilia',
     'Ghio',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -111,7 +110,7 @@ VALUES (
     'sgonzalezoyuela@gmail.com',
     'Sebastian',
     'Gonzalez Oyuela',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -128,7 +127,7 @@ VALUES (
     'cra.ochoafernanda84@gmail.com',
     'Fernanda',
     'Ochoa',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET

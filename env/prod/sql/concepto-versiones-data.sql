@@ -1,7 +1,7 @@
 -- =============================================================================
 -- Concepto Versiones - Temporal/Versioned Configuration Data
 -- =============================================================================
--- Public schema seed data for the concepto_versiones table.
+-- Public schema seed data for the concepto_versiones table (rayuela database).
 -- This table carries the temporal and behavioral configuration that was
 -- previously stored directly on the conceptos table (fecha_desde, fecha_hasta,
 -- remunerativo, bonificable). Each row represents a version of a concepto's
@@ -12,6 +12,8 @@
 -- UUIDs are deterministic: 00000000-0000-4000-9000-{codigo padded to 12}
 -- (same pattern as concepto IDs but with 9000 instead of 8000).
 -- =============================================================================
+
+SET search_path = 'public';
 
 INSERT INTO concepto_versiones (id, concepto_id, fecha_desde, fecha_hasta, remunerativo, bonificable, formulas, dependencias, version) VALUES
     -- Haberes (tipo H)

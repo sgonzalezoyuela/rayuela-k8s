@@ -1,9 +1,9 @@
 #!/bin/sh
-# backup.sh - Backup Rayuela PostgreSQL databases to restic REST server
+# backup.sh - Backup Rayuela PostgreSQL database to restic REST server
 #
 # This script runs as a Kubernetes CronJob to:
-# 1. Dump all Rayuela databases (grexc, grext1, grext2)
-# 2. Backup dumps to restic REST server via nginx proxy
+# 1. Dump the 'rayuela' database (includes all schemas: public + tenant_*)
+# 2. Backup dump to restic REST server via nginx proxy
 # 3. Apply retention policy (7 daily, 4 weekly, 12 monthly)
 #
 # Required environment variables:
@@ -18,7 +18,7 @@ set -e
 BACKUP_DIR="/tmp/backup"
 DB_HOST="${DB_HOST:-rayuela-db}"
 DB_USER="${DB_USER:-grex}"
-DATABASES="grexc grext1 grext2"
+DATABASES="rayuela"
 
 echo "=========================================="
 echo "Rayuela Database Backup"

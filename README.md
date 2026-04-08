@@ -88,7 +88,7 @@ kubectl logs -n rayuela -l app.kubernetes.io/name=rayuela -f       # prod
 | Environment | Namespace | Domain | Replicas | CPU | Memory | DB Storage |
 |-------------|-----------|--------|----------|-----|--------|------------|
 | dev | `rayuela-dev` | rayuela-dev.grex.com.ar | 1 | 250m-500m | 512Mi-1Gi | 5Gi |
-| prod | `rayuela` | rayuela.grex.com.ar | 2 | 500m-1000m | 1Gi-2Gi | 20Gi |
+| prod | `rayuela` | rayue.la| 2 | 500m-1000m | 1Gi-2Gi | 20Gi |
 
 ## Configuration
 
@@ -100,12 +100,11 @@ The application is configured via environment variables in ConfigMaps and Secret
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `CENTRAL_DB_HOST` | Central database host | `rayuela-db` |
-| `CENTRAL_DB_PORT` | Central database port | `5432` |
-| `CENTRAL_DB_NAME` | Central database name | `grexc` |
-| `CENTRAL_DB_USERNAME` | Database username | `grex` |
-| `TENANT_T1_*` | Tenant 1 database config | Same host, `grext1` |
-| `TENANT_T2_*` | Tenant 2 database config | Same host, `grext2` |
+| `DB_HOST` | Database host | `rayuela-db` |
+| `DB_PORT` | Database port | `5432` |
+| `DB_NAME` | Database name | `rayuela` |
+| `DB_USERNAME` | Database username | `grex` |
+| `DB_PASSWORD` | Database password (via Secret) | - |
 | `SERVER_PORT` | Application port | `8080` |
 | `TZ` | Timezone | `America/Argentina/Buenos_Aires` |
 
@@ -152,7 +151,7 @@ The application requires OIDC authentication. Configure before deployment:
    | Environment | Callback URL | Logout URL |
    |-------------|--------------|------------|
    | Dev | `https://rayuela-dev.grex.com.ar/login/oauth2/code/oidc` | `https://rayuela-dev.grex.com.ar/` |
-   | Prod | `https://rayuela.grex.com.ar/login/oauth2/code/oidc` | `https://rayuela.grex.com.ar/` |
+   | Prod | `https://rayue.la/login/oauth2/code/oidc` | `https://rayue.la/` |
 
 3. **Update OIDC issuer URI** in `env/<env>/patches/configmap.yaml`:
    ```yaml
@@ -233,38 +232,53 @@ kubectl rollout restart statefulset/rayuela-db -n rayuela
 
 PostgreSQL 17 runs as a StatefulSet with persistent storage.
 
+### Database Architecture (Schema-Per-Tenant)
+
+Rayuela uses a **single PostgreSQL database** (`rayuela`) with schema-based multi-tenancy:
+
+- **`public` schema** — Central/shared data: organizations, users, user_org_assignments, convenios, cargos, conceptos, concepto_versiones, obras_sociales
+- **`tenant_{uuid}` schemas** — Per-organization data: business_units, tenant_users, roles, permissions, legajos, liquidaciones
+
+Tenant schemas are created automatically by the init container and at runtime by the application when new organizations are provisioned via the API.
+
 ### Database Initialization
 
-Databases are automatically created and seeded by an **init container** that runs before the Rayuela application starts. This init container:
+An **init container** runs before the Rayuela application starts. It:
 
 1. Waits for PostgreSQL to be ready (up to 30 retries)
-2. Creates the databases if they don't exist:
-   - `grexc` - Central database (organizations, users)
-   - `grext1` - Tenant 1 database
-   - `grext2` - Tenant 2 database
-3. Loads seed data from SQL files:
-   - `central-data.sql` → grexc (organizations, users, assignments)
-   - `cargos-data.sql` → grext1, grext2 (job titles)
-   - `conceptos-data.sql` → grext1, grext2 (payroll concepts)
-   - `tenant1-data.sql` → grext1 (business units for tenant 1)
-   - `tenant2-data.sql` → grext2 (business units for tenant 2)
-4. Uses idempotent SQL (ON CONFLICT clauses) - safe to run multiple times
+2. Grants privileges on the `public` schema and `CREATE ON DATABASE` to the app user
+3. Creates tenant schemas from the `TENANT_SCHEMAS` env var (comma-separated UUIDs set per-environment via Kustomize patches)
+4. Grants full privileges on each tenant schema
+
+After the init container completes, Flyway runs migrations on `public` and all `tenant_*` schemas when the app starts.
 
 The init container uses PostgreSQL 17 Alpine image and runs `base/app/init-db.sh`.
 
 ### SQL Seed Data
 
-Seed data files are located in `base/app/sql/`:
+Seed data files are located in `env/{dev,prod}/sql/`. Each file sets its own `search_path` to target the correct schema.
 
-| File | Database | Contents |
-|------|----------|----------|
-| `central-data.sql` | grexc | Organizations, users, user-org assignments |
-| `cargos-data.sql` | grext1, grext2 | Job titles (cargos) |
-| `conceptos-data.sql` | grext1, grext2 | Payroll concepts |
-| `tenant1-data.sql` | grext1 | Business units for Organization 1 |
-| `tenant2-data.sql` | grext2 | Business units for Organization 2 |
+| File | Schema | Contents |
+|------|--------|----------|
+| `central-data.sql` | `public` | Organizations, users, user-org assignments |
+| `convenios-data.sql` | `public` | Salary agreements |
+| `cargos-data.sql` | `public` | Job titles |
+| `conceptos-data.sql` | `public` | Payroll concepts |
+| `concepto-versiones-data.sql` | `public` | Temporal concept configuration |
+| `tenant1-data.sql` | `tenant_{uuid}` | Business units, users, roles for tenant 1 |
+| `tenant2-data.sql` | `tenant_{uuid}` | Business units, users, roles for tenant 2 |
 
-To modify seed data, edit the SQL files and redeploy. The SQL uses `ON CONFLICT DO UPDATE` for idempotency.
+Seed data must be loaded **manually** after deployment (Flyway creates the tables first):
+
+```bash
+# Production
+scripts/seed-prod.sh
+
+# Development
+scripts/seed-dev.sh
+```
+
+All SQL uses `ON CONFLICT DO UPDATE` for idempotency — safe to run multiple times.
 
 ### Checking Init Container Logs
 
@@ -283,7 +297,7 @@ kubectl logs -n rayuela <pod-name> -c init-db
 kubectl port-forward -n rayuela svc/rayuela-db 5432:5432
 
 # Connect with psql
-psql -h localhost -U grex -d grexc
+psql -h localhost -U grex -d rayuela
 ```
 
 ## Pangolin Integration
@@ -293,7 +307,7 @@ The application is exposed via ClusterIP service on port 8080. Configure Pangoli
 | Domain | Target |
 |--------|--------|
 | rayuela-dev.grex.com.ar | rayuela.rayuela.svc.cluster.local:8080 |
-| rayuela.grex.com.ar | rayuela.rayuela.svc.cluster.local:8080 |
+| rayue.la | rayuela.rayuela.svc.cluster.local:8080 |
 
 ## Troubleshooting
 

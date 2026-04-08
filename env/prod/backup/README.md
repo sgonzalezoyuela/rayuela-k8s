@@ -19,7 +19,7 @@ Daily backup of PostgreSQL databases to restic REST server via nginx reverse pro
 | Setting | Value |
 |---------|-------|
 | Schedule | Daily at 02:00 AM (Argentina time) |
-| Databases | grexc, grext1, grext2 |
+| Database | rayuela (all schemas: public + tenant_*) |
 | Repository | `rest:http://10.0.3.2:8000/rayuela` (via nginx proxy) |
 | Retention | 7 daily, 4 weekly, 12 monthly |
 
@@ -84,12 +84,12 @@ restic -r rest:http://cemcc-t:8000/rayuela snapshots
 # Restore latest snapshot to a local directory
 restic -r rest:http://cemcc-t:8000/rayuela restore latest --target /tmp/restore
 
-# Restore specific database
-pg_restore -h <host> -U grex -d grexc /tmp/restore/tmp/backup/grexc.dump
+# Restore the database
+pg_restore -h <host> -U grex -d rayuela /tmp/restore/tmp/backup/rayuela.dump
 
 # Or restore to a new database
-createdb -h <host> -U grex grexc_restored
-pg_restore -h <host> -U grex -d grexc_restored /tmp/restore/tmp/backup/grexc.dump
+createdb -h <host> -U grex rayuela_restored
+pg_restore -h <host> -U grex -d rayuela_restored /tmp/restore/tmp/backup/rayuela.dump
 ```
 
 ### Restore from specific snapshot

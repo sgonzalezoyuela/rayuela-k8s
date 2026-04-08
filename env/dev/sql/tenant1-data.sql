@@ -1,12 +1,9 @@
 -- =============================================================================
--- Development Database - Tenant 1 (grext1)
+-- Development Seed Data - Tenant Schema (rayuela database)
+-- Tenant: Dev Organization 1
 -- =============================================================================
--- TODO: Replace placeholder data with actual dev environment data.
---
--- organization_id must match the tenant ID in application.yml
--- that maps to this database (grext1):
---   f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6
--- =============================================================================
+
+SET search_path = 'tenant_f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6';
 
 -- -----------------------------------------------------------------------------
 -- Business Unit
@@ -72,7 +69,7 @@ VALUES (
     'dev-user1@example.com',
     'Dev',
     'User One',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -89,7 +86,7 @@ VALUES (
     'sgonzalezoyuela@gmail.com',
     'Sebastian',
     'Gonzalez Oyuela',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -106,7 +103,7 @@ VALUES (
     'ceciliaghio49@gmail.com',
     'Maria Cecilia',
     'Ghio',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -123,7 +120,7 @@ VALUES (
     'cra.ochoafernanda84@gmail.com',
     'Fernanda',
     'Ochoa',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET

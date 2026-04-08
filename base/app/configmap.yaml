@@ -11,36 +11,13 @@ data:
   SPRING_PROFILES_ACTIVE: "dev"
 
   # ─────────────────────────────────────────────────────────────────
-  # Central Database Configuration
+  # Database Configuration (single database, schema-per-tenant)
   # ─────────────────────────────────────────────────────────────────
-  CENTRAL_DB_HOST: "rayuela-db"
-  CENTRAL_DB_PORT: "5432"
-  CENTRAL_DB_NAME: "grexc"
-  CENTRAL_DB_USERNAME: "grex"
-  # CENTRAL_DB_PASSWORD is set via Secret
-  CENTRAL_DB_USE_TLS: "false"
-
-  # ─────────────────────────────────────────────────────────────────
-  # Tenant 1 Database Configuration
-  # ─────────────────────────────────────────────────────────────────
-  TENANT_T1_NAME: "Tenant T1"
-  TENANT_T1_DB_HOST: "rayuela-db"
-  TENANT_T1_DB_PORT: "5432"
-  # Database name is hardcoded in application.yml as grext1
-  TENANT_T1_DB_USERNAME: "grex"
-  # TENANT_T1_DB_PASSWORD is set via Secret
-  TENANT_T1_DB_USE_TLS: "false"
-
-  # ─────────────────────────────────────────────────────────────────
-  # Tenant 2 Database Configuration
-  # ─────────────────────────────────────────────────────────────────
-  TENANT_T2_NAME: "Tenant T2"
-  TENANT_T2_DB_HOST: "rayuela-db"
-  TENANT_T2_DB_PORT: "5432"
-  # Database name is hardcoded in application.yml as grext2
-  TENANT_T2_DB_USERNAME: "grex"
-  # TENANT_T2_DB_PASSWORD is set via Secret
-  TENANT_T2_DB_USE_TLS: "false"
+  DB_HOST: "rayuela-db"
+  DB_PORT: "5432"
+  DB_NAME: "rayuela"
+  DB_USERNAME: "grex"
+  # DB_PASSWORD is set via Secret
 
   # ─────────────────────────────────────────────────────────────────
   # OAuth2/OIDC Configuration (disabled by default in base)

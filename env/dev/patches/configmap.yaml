@@ -20,3 +20,7 @@ data:
 
   # Show SQL in dev for debugging
   SPRING_JPA_SHOW_SQL: "false"
+
+  # Tenant schemas to create during init (comma-separated UUIDs)
+  # Obispado de Cruz del Eje + Dev Tenant
+  TENANT_SCHEMAS: "f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6,df766dc2-6d4c-44d4-90ad-19d9ab69fa9d"

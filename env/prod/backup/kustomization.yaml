@@ -6,7 +6,7 @@ namespace: rayuela-prod
 # Rayuela Database Backup
 # Daily backup of PostgreSQL databases to restic REST server
 #
-# Databases backed up: grexc, grext1, grext2
+# Database backed up: rayuela (all schemas: public + tenant_*)
 # Schedule: Daily at 02:00 AM (Argentina time)
 # Retention: 7 daily, 4 weekly, 12 monthly
 

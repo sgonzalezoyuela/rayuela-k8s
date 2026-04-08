@@ -37,10 +37,10 @@ spec:
                 secretKeyRef:
                   name: rayuela-secrets
                   key: db-password
-            # Default database created by PostgreSQL
-            # Additional databases (grexc, grext1, grext2) are created by the app's init container
+            # Single database for schema-per-tenant architecture
+            # Tenant schemas are created by the app's init container
             - name: POSTGRES_DB
-              value: postgres
+              value: rayuela
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
             - name: POSTGRES_INITDB_ARGS
@@ -65,7 +65,7 @@ spec:
                 - -U
                 - grex
                 - -d
-                - postgres
+                - rayuela
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
@@ -77,7 +77,7 @@ spec:
                 - -U
                 - grex
                 - -d
-                - postgres
+                - rayuela
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 3

@@ -1,13 +1,15 @@
 -- =============================================================================
 -- Cargos (Job Titles) - Shared Catalog Data
 -- =============================================================================
--- Public schema seed data for the cargos table.
+-- Public schema seed data for the cargos table (rayuela database).
 -- All cargos belong to a convenio. Currently all rows belong to the
 -- "Escala Salarial Docente - CBA" convenio (ESC-DOC-CBA).
 -- This data is identical for all environments (dev, prod).
 --
 -- UUIDs are deterministic based on cargo codigo for reproducibility.
 -- =============================================================================
+
+SET search_path = 'public';
 
 INSERT INTO cargos (id, convenio_id, codigo, descripcion, version) VALUES
     ('00000000-0000-4000-8000-000000013001', '00000000-0000-4000-8000-000000000001', '13001', 'Director D.E.M.E.S.', 0),

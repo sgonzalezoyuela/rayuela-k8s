@@ -1,10 +1,9 @@
 -- =============================================================================
--- Development Database - Tenant 2 (grext2)
+-- Development Seed Data - Tenant Schema (rayuela database)
+-- Tenant: Dev Organization 2
 -- =============================================================================
--- organization_id must match the tenant ID in application.yml
--- that maps to this database (grext2):
---   df766dc2-6d4c-44d4-90ad-19d9ab69fa9d
--- =============================================================================
+
+SET search_path = 'tenant_df766dc2-6d4c-44d4-90ad-19d9ab69fa9d';
 
 -- -----------------------------------------------------------------------------
 -- Business Unit
@@ -70,7 +69,7 @@ VALUES (
     'sgonzalezoyuela@gmail.com',
     'Sebastian',
     'Gonzalez Oyuela',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -87,7 +86,7 @@ VALUES (
     'ceciliaghio49@gmail.com',
     'Maria Cecilia',
     'Ghio',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -104,7 +103,7 @@ VALUES (
     'cra.ochoafernanda84@gmail.com',
     'Fernanda',
     'Ochoa',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET

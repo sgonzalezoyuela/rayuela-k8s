@@ -1,12 +1,9 @@
 -- =============================================================================
--- Production Database - Tenant 2 (grext2)
+-- Production Seed Data - Tenant 2 Schema (rayuela database)
 -- =============================================================================
 -- This file is intentionally empty.
 -- 
--- Production deployment only uses a single organization (Obispado de Cruz del Eje)
--- which is stored in grext1. Organization 2 and its tenant database are not used
--- in production.
---
--- If a second organization is needed in the future, add its data here following
--- the UUID pattern: 10000000-0000-0000-TTTT-NNNNNNNNNNNN
+-- Production deployment only uses a single organization (Obispado de Cruz del Eje).
+-- If a second organization is needed in the future, add its data here with
+-- SET search_path = 'tenant_{uuid}'; at the top.
 -- =============================================================================

@@ -41,7 +41,7 @@ spec:
             - configMapRef:
                 name: rayuela-config
           env:
-            - name: CENTRAL_DB_PASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: rayuela-secrets
@@ -77,19 +77,9 @@ spec:
                 name: rayuela-config
           env:
             # ─────────────────────────────────────────────────────────
-            # Database Passwords (from secrets)
+            # Database Password (from secrets)
             # ─────────────────────────────────────────────────────────
-            - name: CENTRAL_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: rayuela-secrets
-                  key: db-password
-            - name: TENANT_T1_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: rayuela-secrets
-                  key: db-password
-            - name: TENANT_T2_DB_PASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: rayuela-secrets

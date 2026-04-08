@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "projectName": "rayuela-k8s",
+    "goal": "Migrate K8s deployment from database-per-tenant (3 DBs: grexc, grext1, grext2) to schema-per-tenant (1 DB: rayuela, with public + tenant_{uuid} schemas) to match the current application architecture.",
+    "createdAt": "2026-04-08T02:13:00.551Z",
+    "updatedAt": "2026-04-08T02:29:13.358Z",
+    "version": 3,
+    "tddMode": "disabled"
+  },
+  "features": [
+    {
+      "id": "db.connection",
+      "description": "Fix DB connection: align K8s env vars with what the Spring Boot app expects (DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD) so the app connects to rayuela-db instead of falling back to localhost.",
+      "module": "base",
+      "priority": 1,
+      "status": "passing",
+      "acceptance": [
+        "base/app/configmap.yaml uses DB_HOST, DB_PORT, DB_NAME, DB_USERNAME instead of CENTRAL_DB_* and TENANT_T*_* vars",
+        "base/app/deployment.yaml uses DB_PASSWORD instead of CENTRAL_DB_PASSWORD for both init container and main container",
+        "base/app/deployment.yaml no longer references TENANT_T1_DB_PASSWORD or TENANT_T2_DB_PASSWORD",
+        "base/database/statefulset.yaml sets POSTGRES_DB to 'rayuela' instead of 'postgres'",
+        "base/database/statefulset.yaml health probes check against 'rayuela' database",
+        "env/prod/patches/configmap.yaml does not reference any CENTRAL_DB_* or TENANT_T*_* vars"
+      ],
+      "dependsOn": [],
+      "filesToChange": [
+        "base/app/configmap.yaml",
+        "base/app/deployment.yaml",
+        "base/database/statefulset.yaml"
+      ],
+      "version": 1,
+      "updatedAt": "2026-04-08T02:29:13.358Z"
+    },
+    {
+      "id": "db.init-script",
+      "description": "Rewrite init-db.sh for single-database schema-per-tenant: create tenant schemas (not separate databases), grant CREATE ON DATABASE, set schema privileges. Prod creates 1 tenant schema, dev creates 2.",
+      "module": "base",
+      "priority": 2,
+      "status": "failing",
+      "acceptance": [
+        "base/app/init-db.sh creates tenant schemas (tenant_{uuid}) inside the 'rayuela' database instead of creating separate databases (grexc, grext1, grext2)",
+        "init-db.sh grants CREATE ON DATABASE rayuela to the app user so new tenant schemas can be created at runtime",
+        "init-db.sh grants ALL PRIVILEGES on public schema and tenant schemas to the app user",
+        "init-db.sh reads tenant UUIDs from env var DB_HOST connection (connects to 'rayuela' DB)",
+        "Prod creates schema tenant_f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6 (Obispado de Cruz del Eje)",
+        "Dev creates schemas tenant_f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6 and tenant_df766dc2-6d4c-44d4-90ad-19d9ab69fa9d",
+        "Tenant schema list is hardcoded per-environment via Kustomize patches (Option A)"
+      ],
+      "dependsOn": [
+        "db.connection"
+      ],
+      "filesToChange": [
+        "base/app/init-db.sh",
+        "env/prod/patches/configmap.yaml",
+        "env/dev/patches/configmap.yaml"
+      ],
+      "version": 1
+    },
+    {
+      "id": "sql.seed-schema-migration",
+      "description": "Adapt all SQL seed files for schema-per-tenant model: add SET search_path directives, fix column names (schema_name not nombre_esquema, status not estado), fix enum values (HABILITADO not ENABLED for tenant_users), add schema_name to organizations INSERT.",
+      "module": "sql",
+      "priority": 3,
+      "status": "failing",
+      "acceptance": [
+        "All public-schema SQL files (central-data, convenios-data, cargos-data, conceptos-data, concepto-versiones-data) start with SET search_path = 'public';",
+        "Prod tenant1-data.sql starts with SET search_path = 'tenant_f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6';",
+        "Dev tenant1-data.sql starts with SET search_path = 'tenant_f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6';",
+        "Dev tenant2-data.sql starts with SET search_path = 'tenant_df766dc2-6d4c-44d4-90ad-19d9ab69fa9d';",
+        "organizations INSERT includes schema_name column with value 'tenant_{uuid}'",
+        "organizations INSERT uses status = 'ACTIVA' (not 'ACTIVE')",
+        "tenant_users INSERT uses status = 'HABILITADO' (not 'ENABLED')",
+        "All SQL file comments updated to remove references to grexc/grext1/grext2 databases",
+        "All SQL files remain idempotent (ON CONFLICT)"
+      ],
+      "dependsOn": [
+        "db.init-script"
+      ],
+      "filesToChange": [
+        "env/prod/sql/central-data.sql",
+        "env/prod/sql/convenios-data.sql",
+        "env/prod/sql/cargos-data.sql",
+        "env/prod/sql/conceptos-data.sql",
+        "env/prod/sql/concepto-versiones-data.sql",
+        "env/prod/sql/tenant1-data.sql",
+        "env/prod/sql/tenant2-data.sql",
+        "env/dev/sql/central-data.sql",
+        "env/dev/sql/tenant1-data.sql",
+        "env/dev/sql/tenant2-data.sql"
+      ],
+      "version": 1
+    },
+    {
+      "id": "scripts.seed-update",
+      "description": "Update seed scripts to use single 'rayuela' database: all psql commands use -d rayuela, catalog data (convenios, cargos, conceptos) runs once against public schema instead of duplicated per-tenant DB, remove migration SQL calls (already merged into seed files).",
+      "module": "scripts",
+      "priority": 4,
+      "status": "failing",
+      "acceptance": [
+        "scripts/seed-prod.sh uses '-d rayuela' for all psql commands instead of -d grexc/-d grext1/-d grext2",
+        "scripts/seed-prod.sh runs catalog data (convenios, cargos, conceptos, concepto-versiones) only once (not duplicated per tenant)",
+        "scripts/seed-prod.sh no longer calls migration SQL files (001-*, 002-*) since data is in main seed files",
+        "scripts/seed-dev.sh uses '-d rayuela' for all psql commands",
+        "scripts/seed-dev.sh runs catalog data only once",
+        "Both scripts have clear comments explaining the public vs tenant schema data flow"
+      ],
+      "dependsOn": [
+        "sql.seed-schema-migration"
+      ],
+      "filesToChange": [
+        "scripts/seed-prod.sh",
+        "scripts/seed-dev.sh"
+      ],
+      "version": 1
+    },
+    {
+      "id": "backup.single-db",
+      "description": "Update prod backup script to dump single 'rayuela' database instead of three separate databases (grexc, grext1, grext2).",
+      "module": "backup",
+      "priority": 5,
+      "status": "failing",
+      "acceptance": [
+        "env/prod/backup/backup.sh sets DATABASES='rayuela' instead of 'grexc grext1 grext2'",
+        "Backup comments updated to reflect single-database architecture"
+      ],
+      "dependsOn": [
+        "db.connection"
+      ],
+      "filesToChange": [
+        "env/prod/backup/backup.sh"
+      ],
+      "version": 1
+    },
+    {
+      "id": "cleanup.migrations",
+      "description": "Remove obsolete migration SQL files and clean up Kustomize configMapGenerator. Migration 001 (Stella Maris BU) and 002 (convenio escala salarial) data is already in the main seed files.",
+      "module": "cleanup",
+      "priority": 6,
+      "status": "failing",
+      "acceptance": [
+        "env/prod/sql/migrations/001-add-stella-maris-bu.sql removed",
+        "env/prod/sql/migrations/002-add-convenio-escala-salarial.sql removed",
+        "env/prod/sql/migrations/ directory removed",
+        "env/prod/kustomization.yaml configMapGenerator no longer references migration SQL files",
+        "base/kustomization.yaml comment updated (remove 'prod=rayuela' namespace reference on line 8)"
+      ],
+      "dependsOn": [
+        "scripts.seed-update"
+      ],
+      "filesToChange": [
+        "env/prod/sql/migrations/001-add-stella-maris-bu.sql",
+        "env/prod/sql/migrations/002-add-convenio-escala-salarial.sql",
+        "env/prod/kustomization.yaml",
+        "base/kustomization.yaml"
+      ],
+      "version": 1
+    },
+    {
+      "id": "docs.readme",
+      "description": "Update README.md to reflect single-database schema-per-tenant architecture: fix env var documentation, update DB initialization section, remove grexc/grext1/grext2 references, update seed data instructions.",
+      "module": "docs",
+      "priority": 7,
+      "status": "failing",
+      "acceptance": [
+        "README no longer references grexc, grext1, grext2 databases",
+        "README documents DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD env vars",
+        "README explains schema-per-tenant architecture (public + tenant_{uuid} schemas)",
+        "README seed data section shows correct scripts/seed-prod.sh usage",
+        "README DB initialization section accurately describes the init container behavior (creates tenant schemas, not databases)"
+      ],
+      "dependsOn": [
+        "cleanup.migrations"
+      ],
+      "filesToChange": [
+        "README.md"
+      ],
+      "version": 1
+    }
+  ]
+}

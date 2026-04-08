@@ -3,8 +3,8 @@
     "projectName": "rayuela-k8s",
     "goal": "Migrate K8s deployment from database-per-tenant (3 DBs: grexc, grext1, grext2) to schema-per-tenant (1 DB: rayuela, with public + tenant_{uuid} schemas) to match the current application architecture.",
     "createdAt": "2026-04-08T02:13:00.551Z",
-    "updatedAt": "2026-04-08T02:29:17.738Z",
-    "version": 5,
+    "updatedAt": "2026-04-08T02:29:17.979Z",
+    "version": 6,
     "tddMode": "disabled"
   },
   "features": [
@@ -97,7 +97,7 @@
       "description": "Update seed scripts to use single 'rayuela' database: all psql commands use -d rayuela, catalog data (convenios, cargos, conceptos) runs once against public schema instead of duplicated per-tenant DB, remove migration SQL calls (already merged into seed files).",
       "module": "scripts",
       "priority": 4,
-      "status": "failing",
+      "status": "passing",
       "acceptance": [
         "scripts/seed-prod.sh uses '-d rayuela' for all psql commands instead of -d grexc/-d grext1/-d grext2",
         "scripts/seed-prod.sh runs catalog data (convenios, cargos, conceptos, concepto-versiones) only once (not duplicated per tenant)",
@@ -113,7 +113,8 @@
         "scripts/seed-prod.sh",
         "scripts/seed-dev.sh"
       ],
-      "version": 1
+      "version": 1,
+      "updatedAt": "2026-04-08T02:29:17.979Z"
     },
     {
       "id": "backup.single-db",

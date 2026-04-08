@@ -28,7 +28,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 # Backup is only for prod
-NAMESPACE="rayuela"
+NAMESPACE="rayuela-prod"
 OUTPUT_FILE="${REPO_ROOT}/env/prod/sealed-secrets/backup-secrets.yaml"
 
 # Check for kubeseal

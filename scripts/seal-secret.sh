@@ -8,7 +8,7 @@
 #
 # Examples:
 #   ./scripts/seal-secret.sh dev   # Creates secret in rayuela-dev namespace
-#   ./scripts/seal-secret.sh prod  # Creates secret in rayuela namespace
+#   ./scripts/seal-secret.sh prod  # Creates secret in rayuela-prod namespace
 #
 # Prerequisites:
 #   - kubeseal CLI installed
@@ -36,7 +36,7 @@ usage() {
     echo ""
     echo "Namespaces:"
     echo "  dev  -> rayuela-dev"
-    echo "  prod -> rayuela"
+    echo "  prod -> rayuela-prod"
     echo ""
 echo "The script will prompt for:"
 echo "  - Database password (required)"
@@ -60,7 +60,7 @@ ENV="$1"
 if [[ "$ENV" == "dev" ]]; then
     NAMESPACE="rayuela-dev"
 elif [[ "$ENV" == "prod" ]]; then
-    NAMESPACE="rayuela"
+    NAMESPACE="rayuela-prod"
 else
     echo -e "${RED}Error: Environment must be 'dev' or 'prod'${NC}"
     usage

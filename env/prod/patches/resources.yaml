@@ -1,4 +1,4 @@
-# Prod environment: larger resources, multiple replicas
+# Prod environment: larger resources, single replica
 apiVersion: apps/v1
 kind: Deployment
 metadata:

@@ -38,7 +38,7 @@ VALUES (
     'ceciliaghio49@gmail.com',
     'Maria Cecilia',
     'Ghio',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -55,7 +55,7 @@ VALUES (
     'sgonzalezoyuela@gmail.com',
     'Sebastian',
     'Gonzalez Oyuela',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -72,7 +72,7 @@ VALUES (
     'cra.ochoafernanda84@gmail.com',
     'Fernanda',
     'Ochoa',
-    'ENABLED',
+    'HABILITADO',
     0
 )
 ON CONFLICT (id) DO UPDATE SET

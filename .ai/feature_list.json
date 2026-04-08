@@ -3,8 +3,8 @@
     "projectName": "rayuela-k8s",
     "goal": "Migrate K8s deployment from database-per-tenant (3 DBs: grexc, grext1, grext2) to schema-per-tenant (1 DB: rayuela, with public + tenant_{uuid} schemas) to match the current application architecture.",
     "createdAt": "2026-04-08T02:13:00.551Z",
-    "updatedAt": "2026-04-08T02:29:13.358Z",
-    "version": 3,
+    "updatedAt": "2026-04-08T02:29:17.312Z",
+    "version": 4,
     "tddMode": "disabled"
   },
   "features": [
@@ -36,7 +36,7 @@
       "description": "Rewrite init-db.sh for single-database schema-per-tenant: create tenant schemas (not separate databases), grant CREATE ON DATABASE, set schema privileges. Prod creates 1 tenant schema, dev creates 2.",
       "module": "base",
       "priority": 2,
-      "status": "failing",
+      "status": "passing",
       "acceptance": [
         "base/app/init-db.sh creates tenant schemas (tenant_{uuid}) inside the 'rayuela' database instead of creating separate databases (grexc, grext1, grext2)",
         "init-db.sh grants CREATE ON DATABASE rayuela to the app user so new tenant schemas can be created at runtime",
@@ -54,7 +54,8 @@
         "env/prod/patches/configmap.yaml",
         "env/dev/patches/configmap.yaml"
       ],
-      "version": 1
+      "version": 1,
+      "updatedAt": "2026-04-08T02:29:17.311Z"
     },
     {
       "id": "sql.seed-schema-migration",

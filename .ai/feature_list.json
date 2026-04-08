@@ -3,8 +3,8 @@
     "projectName": "rayuela-k8s",
     "goal": "Migrate K8s deployment from database-per-tenant (3 DBs: grexc, grext1, grext2) to schema-per-tenant (1 DB: rayuela, with public + tenant_{uuid} schemas) to match the current application architecture.",
     "createdAt": "2026-04-08T02:13:00.551Z",
-    "updatedAt": "2026-04-08T02:29:23.198Z",
-    "version": 8,
+    "updatedAt": "2026-04-08T02:29:23.381Z",
+    "version": 9,
     "tddMode": "disabled"
   },
   "features": [
@@ -165,7 +165,7 @@
       "description": "Update README.md to reflect single-database schema-per-tenant architecture: fix env var documentation, update DB initialization section, remove grexc/grext1/grext2 references, update seed data instructions.",
       "module": "docs",
       "priority": 7,
-      "status": "failing",
+      "status": "passing",
       "acceptance": [
         "README no longer references grexc, grext1, grext2 databases",
         "README documents DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD env vars",
@@ -179,7 +179,8 @@
       "filesToChange": [
         "README.md"
       ],
-      "version": 1
+      "version": 1,
+      "updatedAt": "2026-04-08T02:29:23.381Z"
     }
   ]
 }

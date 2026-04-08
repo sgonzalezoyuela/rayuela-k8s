@@ -3,8 +3,8 @@
     "projectName": "rayuela-k8s",
     "goal": "Migrate K8s deployment from database-per-tenant (3 DBs: grexc, grext1, grext2) to schema-per-tenant (1 DB: rayuela, with public + tenant_{uuid} schemas) to match the current application architecture.",
     "createdAt": "2026-04-08T02:13:00.551Z",
-    "updatedAt": "2026-04-08T02:29:22.466Z",
-    "version": 7,
+    "updatedAt": "2026-04-08T02:29:23.198Z",
+    "version": 8,
     "tddMode": "disabled"
   },
   "features": [
@@ -140,7 +140,7 @@
       "description": "Remove obsolete migration SQL files and clean up Kustomize configMapGenerator. Migration 001 (Stella Maris BU) and 002 (convenio escala salarial) data is already in the main seed files.",
       "module": "cleanup",
       "priority": 6,
-      "status": "failing",
+      "status": "passing",
       "acceptance": [
         "env/prod/sql/migrations/001-add-stella-maris-bu.sql removed",
         "env/prod/sql/migrations/002-add-convenio-escala-salarial.sql removed",
@@ -157,7 +157,8 @@
         "env/prod/kustomization.yaml",
         "base/kustomization.yaml"
       ],
-      "version": 1
+      "version": 1,
+      "updatedAt": "2026-04-08T02:29:23.196Z"
     },
     {
       "id": "docs.readme",

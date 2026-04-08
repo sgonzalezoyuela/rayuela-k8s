@@ -3,8 +3,8 @@
     "projectName": "rayuela-k8s",
     "goal": "Migrate K8s deployment from database-per-tenant (3 DBs: grexc, grext1, grext2) to schema-per-tenant (1 DB: rayuela, with public + tenant_{uuid} schemas) to match the current application architecture.",
     "createdAt": "2026-04-08T02:13:00.551Z",
-    "updatedAt": "2026-04-08T02:29:17.979Z",
-    "version": 6,
+    "updatedAt": "2026-04-08T02:29:22.466Z",
+    "version": 7,
     "tddMode": "disabled"
   },
   "features": [
@@ -121,7 +121,7 @@
       "description": "Update prod backup script to dump single 'rayuela' database instead of three separate databases (grexc, grext1, grext2).",
       "module": "backup",
       "priority": 5,
-      "status": "failing",
+      "status": "passing",
       "acceptance": [
         "env/prod/backup/backup.sh sets DATABASES='rayuela' instead of 'grexc grext1 grext2'",
         "Backup comments updated to reflect single-database architecture"
@@ -132,7 +132,8 @@
       "filesToChange": [
         "env/prod/backup/backup.sh"
       ],
-      "version": 1
+      "version": 1,
+      "updatedAt": "2026-04-08T02:29:22.465Z"
     },
     {
       "id": "cleanup.migrations",

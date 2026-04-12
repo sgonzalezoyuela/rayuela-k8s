@@ -48,6 +48,10 @@ configMapGenerator:
       - sql/cargos-data.sql
       - sql/conceptos-data.sql
       - sql/concepto-versiones-data.sql
+      - sql/actividades-data.sql
+      - sql/modalidades-contratacion-data.sql
+      - sql/situaciones-revista-nac-data.sql
+      - sql/zonas-data.sql
       - sql/tenant1-data.sql
       - sql/tenant2-data.sql
 

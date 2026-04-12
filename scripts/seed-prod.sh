@@ -33,6 +33,14 @@ echo "  [public] conceptos-data.sql"
 kubectl exec -it "${POD}" -n "${NS}" -- psql -U grex -d "${DB}" -f /sql/conceptos-data.sql
 echo "  [public] concepto-versiones-data.sql"
 kubectl exec -it "${POD}" -n "${NS}" -- psql -U grex -d "${DB}" -f /sql/concepto-versiones-data.sql
+echo "  [public] actividades-data.sql"
+kubectl exec -it "${POD}" -n "${NS}" -- psql -U grex -d "${DB}" -f /sql/actividades-data.sql
+echo "  [public] modalidades-contratacion-data.sql"
+kubectl exec -it "${POD}" -n "${NS}" -- psql -U grex -d "${DB}" -f /sql/modalidades-contratacion-data.sql
+echo "  [public] situaciones-revista-nac-data.sql"
+kubectl exec -it "${POD}" -n "${NS}" -- psql -U grex -d "${DB}" -f /sql/situaciones-revista-nac-data.sql
+echo "  [public] zonas-data.sql"
+kubectl exec -it "${POD}" -n "${NS}" -- psql -U grex -d "${DB}" -f /sql/zonas-data.sql
 
 # ─────────────────────────────────────────────────────────────────
 # 3. Tenant schema data (each file sets its own search_path)

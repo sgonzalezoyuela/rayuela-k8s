@@ -1,4 +1,4 @@
-# Dev environment: use dev tag with Always pull policy
+# Dev environment: pull policy (image tag managed via kustomization.yaml images)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8,6 +8,4 @@ spec:
     spec:
       containers:
         - name: rayuela
-          #image: ghcr.io/sgonzalezoyuela/rayuela:latest
-          image: cr.lab.atricore.io/sgonzalezoyuela/rayuela:latest
           imagePullPolicy: Always

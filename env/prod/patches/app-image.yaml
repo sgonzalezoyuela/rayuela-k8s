@@ -1,4 +1,4 @@
-# Prod environment: use specific version tag with IfNotPresent policy
+# Prod environment: pull policy (image tag managed via kustomization.yaml images)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8,5 +8,4 @@ spec:
     spec:
       containers:
         - name: rayuela
-          image: cr.lab.atricore.io/sgonzalezoyuela/rayuela:0.5.0
           imagePullPolicy: IfNotPresent

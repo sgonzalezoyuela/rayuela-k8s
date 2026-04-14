@@ -33,10 +33,9 @@ data:
   OAUTH2_TOKEN_RETRY_DELAY_MS: "500"     # Delay between retries (ms)
 
   # ─────────────────────────────────────────────────────────────────
-  # Application Metadata
+  # Application Metadata (version is set per-environment overlay)
   # ─────────────────────────────────────────────────────────────────
   RAYUELA_ENV: "Development"
-  RAYUELA_VERSION: "0.2.4"
 
   # ─────────────────────────────────────────────────────────────────
   # Server Configuration

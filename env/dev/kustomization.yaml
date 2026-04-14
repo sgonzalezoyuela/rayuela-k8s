@@ -13,7 +13,7 @@ resources:
   - sealed-secrets/secrets.yaml
 
 patches:
-  # App image and pull policy for dev
+  # App pull policy for dev
   - path: patches/app-image.yaml
     target:
       kind: Deployment
@@ -48,6 +48,12 @@ configMapGenerator:
       - sql/concepto-versiones-data.sql
       - sql/tenant1-data.sql
       - sql/tenant2-data.sql
+
+# Image tag managed here — keep in sync with RAYUELA_VERSION in patches/configmap.yaml
+images:
+  - name: ghcr.io/sgonzalezoyuela/rayuela
+    newName: cr.lab.atricore.io/sgonzalezoyuela/rayuela
+    newTag: "0.6.0-dev"
 
 labels:
   - pairs:

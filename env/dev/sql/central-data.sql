@@ -125,7 +125,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- Dev User 1 -> Dev Organization 1
 INSERT INTO user_org_assignments (id, user_id, organization_id, version)
 VALUES (
-    '20000000-0000-0000-0005-000000000001',
+    '20000000-0000-0000-005-000000000001',
     '20000000-0000-0000-0001-000000000001',
     'f780d30d-20a4-4d0a-a2f7-b3a1523eb3d6',
     0

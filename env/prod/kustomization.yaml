@@ -15,7 +15,7 @@ resources:
   - backup
 
 patches:
-  # App image and pull policy for prod
+  # App pull policy for prod
   - path: patches/app-image.yaml
     target:
       kind: Deployment
@@ -54,6 +54,12 @@ configMapGenerator:
       - sql/zonas-data.sql
       - sql/tenant1-data.sql
       - sql/tenant2-data.sql
+
+# Image tag managed here — keep in sync with RAYUELA_VERSION in patches/configmap.yaml
+images:
+  - name: ghcr.io/sgonzalezoyuela/rayuela
+    newName: cr.lab.atricore.io/sgonzalezoyuela/rayuela
+    newTag: "0.5.1"
 
 labels:
   - pairs:

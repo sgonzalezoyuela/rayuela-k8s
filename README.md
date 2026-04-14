@@ -27,8 +27,9 @@ rayuela-k8s/
     │   ├── restore-local.sh  # Restore backup into local Docker
     │   ├── seed-dev.sh       # Seed development data
     │   ├── seed-prod.sh      # Seed production data
-    │   ├── check-restic-backup-prod.sh  # Monitor automated backups
-    │   └── backfill-legajo-defaults.sh  # One-time data migration
+    │   ├── check-restic-backup-prod.sh     # Monitor automated backups
+    │   ├── download-restic-backup.sh       # Download backup from restic
+    │   └── backfill-legajo-defaults.sh     # One-time data migration
     ├── secrets/              # Secret management
     │   ├── seal-secret.sh    # Seal app secrets (dev/prod)
     │   └── seal-backup-secret.sh  # Seal backup secret (prod)

@@ -41,6 +41,8 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
             fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
           
           # Init container to provide restic binary
           initContainers:
@@ -54,6 +56,8 @@ spec:
                   mountPath: /tools
               securityContext:
                 allowPrivilegeEscalation: false
+                seccompProfile:
+                  type: RuntimeDefault
                 capabilities:
                   drop:
                     - ALL
@@ -119,6 +123,8 @@ spec:
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: false
+                seccompProfile:
+                  type: RuntimeDefault
                 capabilities:
                   drop:
                     - ALL

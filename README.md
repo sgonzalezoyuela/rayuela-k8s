@@ -16,12 +16,24 @@ rayuela-k8s/
 │   │   ├── namespace.yaml
 │   │   ├── sealed-secrets/   # Encrypted secrets for dev
 │   │   └── patches/          # Dev-specific overrides
-│   └── prod/                 # Production environment (namespace: rayuela)
+│   └── prod/                 # Production environment (namespace: rayuela-prod)
 │       ├── namespace.yaml
 │       ├── sealed-secrets/   # Encrypted secrets for prod
 │       └── patches/          # Prod-specific overrides
 └── scripts/
-    └── seal-secret.sh        # Helper to seal secrets
+    ├── db/                   # Database operations
+    │   ├── backup-prod.sh    # Create local backup from production
+    │   ├── restore-dev.sh    # Restore backup into K8s dev
+    │   ├── restore-local.sh  # Restore backup into local Docker
+    │   ├── seed-dev.sh       # Seed development data
+    │   ├── seed-prod.sh      # Seed production data
+    │   ├── check-restic-backup-prod.sh  # Monitor automated backups
+    │   └── backfill-legajo-defaults.sh  # One-time data migration
+    ├── secrets/              # Secret management
+    │   ├── seal-secret.sh    # Seal app secrets (dev/prod)
+    │   └── seal-backup-secret.sh  # Seal backup secret (prod)
+    └── release/              # Release management
+        └── bump-version.sh   # Update version across env configs
 ```
 
 ## Prerequisites
@@ -51,10 +63,10 @@ The script will prompt for database password and OIDC credentials (all required)
 
 ```bash
 # For dev environment
-./scripts/seal-secret.sh dev
+./scripts/secrets/seal-secret.sh dev
 
 # For prod environment
-./scripts/seal-secret.sh prod
+./scripts/secrets/seal-secret.sh prod
 ```
 
 ### 3. Deploy
@@ -117,6 +129,7 @@ The application is configured via environment variables in ConfigMaps and Secret
 | `RAYUELA_ENV` | `Desarrollo` |
 | `LOGGING_LEVEL_COM_RAYUELA` | `DEBUG` |
 | `OIDC_ISSUER_URI` | Dev Auth0 tenant |
+| `RAYUELA_VERSION` | `0.6.0-dev` |
 
 **Prod** (`env/prod/patches/configmap.yaml`):
 | Variable | Value |
@@ -125,6 +138,7 @@ The application is configured via environment variables in ConfigMaps and Secret
 | `RAYUELA_ENV` | `Produccion` |
 | `LOGGING_LEVEL_COM_RAYUELA` | `INFO` |
 | `OIDC_ISSUER_URI` | Production OIDC provider |
+| `RAYUELA_VERSION` | `0.5.1` |
 
 ### Secrets (Sealed)
 
@@ -160,7 +174,7 @@ The application requires OIDC authentication. Configure before deployment:
 
 4. **Seal the secrets** with OIDC credentials:
    ```bash
-   ./scripts/seal-secret.sh dev
+   ./scripts/secrets/seal-secret.sh dev
    # Enter database password, OIDC Client ID, and OIDC Client Secret
    ```
 
@@ -169,37 +183,31 @@ The application requires OIDC authentication. Configure before deployment:
    kubectl apply -k env/dev
    ```
 
-## Updating the Image
+## Version Management
 
-### Development
+Versions are managed per-environment. Each environment has:
+- `RAYUELA_VERSION` in `env/<env>/patches/configmap.yaml` (app metadata)
+- `newTag` in `env/<env>/kustomization.yaml` (container image tag)
 
-Edit `env/dev/patches/app-image.yaml`:
+### Bumping a Version
 
-```yaml
-image: ghcr.io/sgonzalezoyuela/rayuela:latest
-imagePullPolicy: Always
-```
-
-Then apply:
+Use the release script to update both files atomically:
 
 ```bash
-kubectl apply -k env/dev
-kubectl rollout restart deployment/rayuela -n rayuela
+# Bump dev to a new version
+./scripts/release/bump-version.sh 0.7.0-dev dev
+
+# Bump prod to a release version
+./scripts/release/bump-version.sh 0.6.0 prod
+
+# Bump both environments at once
+./scripts/release/bump-version.sh 1.0.0 all
 ```
 
-### Production
-
-Edit `env/prod/patches/app-image.yaml` with the specific version:
-
-```yaml
-image: ghcr.io/sgonzalezoyuela/rayuela:1.0.0
-imagePullPolicy: IfNotPresent
-```
-
-Then apply:
+Then deploy:
 
 ```bash
-kubectl apply -k env/prod
+kubectl apply -k env/dev   # or env/prod
 ```
 
 ## Sealed Secrets
@@ -216,7 +224,7 @@ Secrets are encrypted using Bitnami Sealed Secrets. The encrypted secrets in `en
 
 ```bash
 # Generate new sealed secret (will prompt for all values)
-./scripts/seal-secret.sh dev
+./scripts/secrets/seal-secret.sh dev
 
 # Commit and apply
 git add env/dev/sealed-secrets/secrets.yaml
@@ -272,10 +280,10 @@ Seed data must be loaded **manually** after deployment (Flyway creates the table
 
 ```bash
 # Production
-scripts/seed-prod.sh
+scripts/db/seed-prod.sh
 
 # Development
-scripts/seed-dev.sh
+scripts/db/seed-dev.sh
 ```
 
 All SQL uses `ON CONFLICT DO UPDATE` for idempotency — safe to run multiple times.

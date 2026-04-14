@@ -2,13 +2,13 @@
 # seal-secret.sh - Seal secrets for Rayuela environments
 #
 # Usage:
-#   ./scripts/seal-secret.sh <environment>
+#   ./scripts/secrets/seal-secret.sh <environment>
 #
 # The script will prompt for the required values interactively.
 #
 # Examples:
-#   ./scripts/seal-secret.sh dev   # Creates secret in rayuela-dev namespace
-#   ./scripts/seal-secret.sh prod  # Creates secret in rayuela-prod namespace
+#   ./scripts/secrets/seal-secret.sh dev   # Creates secret in rayuela-dev namespace
+#   ./scripts/secrets/seal-secret.sh prod  # Creates secret in rayuela-prod namespace
 #
 # Prerequisites:
 #   - kubeseal CLI installed
@@ -26,7 +26,7 @@ NC='\033[0m' # No Color
 
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 usage() {
     echo "Usage: $0 <environment>"

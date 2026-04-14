@@ -13,8 +13,8 @@
 #   - Pod 'rayuela-db-0' running in namespace 'rayuela-dev'
 #
 # Usage:
-#   ./scripts/restore-dev.sh <file.pgdump>
-#   ./scripts/restore-dev.sh --list
+#   ./scripts/db/restore-dev.sh <file.pgdump>
+#   ./scripts/db/restore-dev.sh --list
 #
 # Options:
 #   --list        List available backups in ./backups/
@@ -25,7 +25,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 NAMESPACE="rayuela-dev"
 POD="rayuela-db-0"
@@ -77,7 +77,7 @@ while [[ $# -gt 0 ]]; do
       else
         echo "  (none)"
         echo ""
-        echo "Create one with: ./scripts/backup-prod.sh"
+        echo "Create one with: ./scripts/db/backup-prod.sh"
       fi
       echo ""
       exit 0

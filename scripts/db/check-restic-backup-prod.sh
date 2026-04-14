@@ -12,7 +12,7 @@
 #   2 = CRITICAL  — backup is stale, failed, or CronJob is missing/suspended
 #
 # Usage:
-#   ./scripts/check-restic-backup-prod.sh [OPTIONS]
+#   ./scripts/db/check-restic-backup-prod.sh [OPTIONS]
 #
 # Options:
 #   --max-age-hours <N>   Max hours since last success before CRITICAL (default: 30)

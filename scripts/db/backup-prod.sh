@@ -3,19 +3,19 @@
 # backup-prod.sh - Create a local backup of the production database
 # =============================================================================
 # Dumps the 'rayuela' database (all schemas: public + tenant_*) from the
-# production pod and copies it locally to ./backups/.
+# production pod and copies it locally to backups/.
 #
 # Filename format: prod-v<VERSION>-<YYYY-MM-DD>.pgdump
-# Version is read from base/app/configmap.yaml (RAYUELA_VERSION).
+# Version is read from env/prod/patches/configmap.yaml (RAYUELA_VERSION).
 #
 # Usage:
-#   ./scripts/backup-prod.sh
+#   ./scripts/db/backup-prod.sh
 # =============================================================================
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 NS="rayuela-prod"
 DB="rayuela"
@@ -24,7 +24,7 @@ USER="grex"
 BACKUP_DIR="${PROJECT_ROOT}/backups"
 
 # Parse version from configmap
-CONFIGMAP="${PROJECT_ROOT}/base/app/configmap.yaml"
+CONFIGMAP="${PROJECT_ROOT}/env/prod/patches/configmap.yaml"
 VERSION=$(grep 'RAYUELA_VERSION' "$CONFIGMAP" | sed 's/.*"\(.*\)"/\1/')
 
 if [ -z "$VERSION" ]; then

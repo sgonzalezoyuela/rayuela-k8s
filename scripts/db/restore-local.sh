@@ -13,8 +13,8 @@
 #     (start with: docker-compose -f ../rayuela/dev/docker-compose.yml up -d)
 #
 # Usage:
-#   ./scripts/restore-local.sh <file.pgdump>
-#   ./scripts/restore-local.sh --list
+#   ./scripts/db/restore-local.sh <file.pgdump>
+#   ./scripts/db/restore-local.sh --list
 #
 # Options:
 #   --list        List available backups in ./backups/
@@ -25,7 +25,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 CONTAINER="rayuela-dev-postgres"
 DB="rayuela"
@@ -77,7 +77,7 @@ while [[ $# -gt 0 ]]; do
       else
         echo "  (none)"
         echo ""
-        echo "Create one with: ./scripts/backup-prod.sh"
+        echo "Create one with: ./scripts/db/backup-prod.sh"
       fi
       echo ""
       exit 0

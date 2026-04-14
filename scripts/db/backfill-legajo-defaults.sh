@@ -13,7 +13,7 @@
 #   modalidades_contratacion, situaciones_revista_nac).
 #
 # Usage:
-#   ./scripts/backfill-legajo-defaults.sh
+#   ./scripts/db/backfill-legajo-defaults.sh
 # =============================================================================
 
 set -e

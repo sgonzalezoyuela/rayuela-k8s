@@ -2,7 +2,7 @@
 # seal-backup-secret.sh - Seal backup secrets for Rayuela production
 #
 # Usage:
-#   ./scripts/seal-backup-secret.sh
+#   ./scripts/secrets/seal-backup-secret.sh
 #
 # This script seals the backup secrets for production:
 #   - restic-password: Restic repository encryption password
@@ -25,7 +25,7 @@ NC='\033[0m' # No Color
 
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 # Backup is only for prod
 NAMESPACE="rayuela-prod"

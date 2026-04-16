@@ -13,7 +13,8 @@ INSERT INTO modalidades_contratacion (id, codigo, desde, hasta, descripcion, apo
     ('00000000-0000-4000-b010-000020090100', 10, '2009-01-01', NULL, 'Práctica profesionalizante-Dcto. 1374/11-Pasantías -sin obra social', FALSE, FALSE, 0),
     ('00000000-0000-4000-b011-000020180200', 11, '2018-02-01', NULL, 'Trabajo de temporada.', TRUE, TRUE, 0),
     ('00000000-0000-4000-b012-000020180200', 12, '2018-02-01', NULL, 'Trabajo eventual.', TRUE, TRUE, 0),
-    ('00000000-0000-4000-b014-000020180200', 14, '2018-02-01', NULL, 'Nuevo Período de Prueba.', TRUE, TRUE, 0)
+    ('00000000-0000-4000-b014-000020180200', 14, '2018-02-01', NULL, 'Nuevo Período de Prueba.', TRUE, TRUE, 0),
+    ('00000000-0000-4000-b099-000020090300', 99, '2009-03-01', NULL, 'LRT (Directores SA, municipios, org, cent y descent. Emp mixt docentes privados o publicos de jurisdicciones incorporadas o no al SIJP)', FALSE, FALSE, 0)
 ON CONFLICT (codigo, desde) DO UPDATE SET
     hasta = EXCLUDED.hasta,
     descripcion = EXCLUDED.descripcion,

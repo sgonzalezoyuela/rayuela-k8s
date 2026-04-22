@@ -9,7 +9,7 @@ data:
 
   # Application metadata
   RAYUELA_ENV: "Desarrollo"
-  RAYUELA_VERSION: "0.5.17"
+  RAYUELA_VERSION: "0.5.18"
 
   # OAuth2/OIDC issuer (Auth0 tenant)
   OIDC_ISSUER_URI: "https://rayuela.us.auth0.com/"

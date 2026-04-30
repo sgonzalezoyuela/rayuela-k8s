@@ -9,8 +9,9 @@ default:
 deploy-dev:
     kubectl apply -k env/dev
 
-# Deploy to prod environment
+# Deploy to prod environment (runs a prod DB backup first)
 deploy-prod:
+    ./scripts/db/backup-prod.sh
     kubectl apply -k env/prod
 
 # Create a local backup of the production database

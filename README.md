@@ -40,9 +40,24 @@ rayuela-k8s/
 ## Prerequisites
 
 - Kubernetes cluster (Talos Linux)
-- `kubectl` configured to access the cluster
-- `kubeseal` CLI installed
 - Container image available at `ghcr.io/sgonzalezoyuela/rayuela:<tag>`
+- All CLI tooling (`kubectl`, `kubeseal`, `kustomize`, `psql`, `pg_dump`,
+  `harlequin`, `pass`, `just`) is provided by the project's Nix shell.
+
+### Nix dev shell
+
+A `flake.nix` at the repo root pins every CLI tool used by `scripts/` and
+`justfile`. Enter the shell once and you have everything:
+
+```bash
+nix develop          # one-shot
+# or, with direnv installed (recommended):
+direnv allow         # auto-activates on `cd`
+```
+
+The shell provides `harlequin` (the PostgreSQL TUI used by
+`scripts/db/ha.sh`) plus `kubectl`, `kubeseal`, `kustomize`, `psql`,
+`pg_dump`, `pass`, `just`, `jq`, and friends.
 
 ## Quick Start
 
@@ -301,11 +316,22 @@ kubectl logs -n rayuela <pod-name> -c init-db
 
 ### Connecting to Database
 
-```bash
-# Port-forward to local machine
-kubectl port-forward -n rayuela svc/rayuela-db 5432:5432
+The fastest path is `harlequin` via the helper script (it sets up the
+port-forward, sources the password from `pass`, and tears the forward down
+on exit):
 
-# Connect with psql
+```bash
+just ha-dev           # PostgreSQL TUI against rayuela-dev/rayuela-db
+just ha-prod          # PostgreSQL TUI against rayuela-prod/rayuela-db
+```
+
+The script reads the DB password from `scripts/db/env-<env>.sh`, which in
+turn pulls it from the local `pass` store (`wk/grex/rayuela/<env>/db`).
+
+For raw `psql`, port-forward manually:
+
+```bash
+kubectl port-forward -n rayuela-prod svc/rayuela-db 5432:5432
 psql -h localhost -U grex -d rayuela
 ```
 

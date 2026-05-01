@@ -5,6 +5,8 @@
 default:
     @just --list
 
+# ── Deployment ────────────────────────────────────────────────────────
+
 # Deploy to dev environment
 deploy-dev:
     kubectl apply -k env/dev
@@ -14,9 +16,21 @@ deploy-prod:
     ./scripts/db/backup-prod.sh
     kubectl apply -k env/prod
 
+# ── Database ──────────────────────────────────────────────────────────
+
+# Connect harlequin (PostgreSQL TUI) to the dev DB via kubectl port-forward
+ha-dev *args:
+    ./scripts/db/ha.sh dev {{args}}
+
+# Connect harlequin (PostgreSQL TUI) to the prod DB via kubectl port-forward
+ha-prod *args:
+    ./scripts/db/ha.sh prod {{args}}
+
 # Create a local backup of the production database
 backup-prod:
     ./scripts/db/backup-prod.sh
+
+# ── Releases ──────────────────────────────────────────────────────────
 
 # Bump Rayuela version for dev environment (e.g. `just release-bump-dev 0.6.0-dev`)
 release-bump-dev version:

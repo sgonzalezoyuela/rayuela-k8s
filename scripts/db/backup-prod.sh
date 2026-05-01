@@ -32,7 +32,7 @@ if [ -z "$VERSION" ]; then
   exit 1
 fi
 
-DATE=$(date +%Y-%m-%d)
+DATE=$(date +%Y-%m-%d_%H-%M)
 FILENAME="prod-v${VERSION}-${DATE}.pgdump"
 
 mkdir -p "$BACKUP_DIR"

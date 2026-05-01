@@ -68,6 +68,8 @@
 
         shellHook = ''
           echo ""
+          onefetch
+          echo ""
           echo "  Rayuela K8s dev shell"
           echo "  ─────────────────────"
           echo "    harlequin   PostgreSQL TUI"

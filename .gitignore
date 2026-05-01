@@ -1,1 +1,7 @@
+# Local DB backups (created by scripts/db/backup-prod.sh)
 backups
+
+# Nix
+.direnv/
+result
+result-*

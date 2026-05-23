@@ -9,7 +9,7 @@ data:
   
   # Application metadata
   RAYUELA_ENV: "Produccion"
-  RAYUELA_VERSION: "0.8.8"
+  RAYUELA_VERSION: "0.8.10"
   
   # OAuth2/OIDC issuer (prod OIDC provider)
   # Override with your actual prod OIDC provider

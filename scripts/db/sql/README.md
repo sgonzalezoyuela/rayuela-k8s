@@ -16,6 +16,7 @@ this directory:
 | File | Scope | Placeholder to edit |
 | --- | --- | --- |
 | `list-legajos.sql` | Tenant (set `search_path`) | — |
+| `uppercase-legajo-names.sql` | Tenant (set `search_path`) | — |
 | `list-detalles-for-liquidacion.sql` | Tenant (set `search_path`) | `liquidacion_id` UUID |
 | `list-cuil-cargo-for-empresa.sql` | Tenant (set `search_path`) | `empresa_code` |
 | `list-conceptos-for-convenio.sql` | Public (no tenant needed) | `convenio_codigo` |

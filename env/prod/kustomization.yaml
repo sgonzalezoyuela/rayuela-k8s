@@ -59,8 +59,8 @@ configMapGenerator:
 images:
   - name: ghcr.io/sgonzalezoyuela/rayuela
     newName: cr.lab.atricore.io/sgonzalezoyuela/rayuela
-    newTag: "0.10.17"
-    newTag: "0.10.17"
+    newTag: "0.10.18"
+    newTag: "0.10.18"
 
 labels:
   - pairs:
